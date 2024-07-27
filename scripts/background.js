@@ -7,14 +7,20 @@ let down_time = 0;
 let time_limit = 10;
 let count_limit = 3
 let injected = false;
+let initial_run = true;
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
+        if (initial_run === true){
+            prev_url = tab.url;
+            initial_run = false;
+        }
         if (prev_url !== tab.url) {
             count++;
+            
+            console.log('Contains', count);
         }
         
-        console.log('Contains', count);
 
     
         if (!timerStarted) {
