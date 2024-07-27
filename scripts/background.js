@@ -3,16 +3,19 @@ let count = 0;
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
         count++;
-        console.log(count);
+        console.log('Contains', count);
 
-        if (count === 10){
-            count = 0;
-
+        //Double actual limit to count
+        if (count === 4) {
+            count = 0;  
             chrome.scripting.executeScript({
-                target:{tabId: tabId},
-                files:['content.js']
-            })
-
+                target: { tabId: tabId },
+                files: ['scripts/content.js']
+            }).then(() => {
+                console.log('Content script injected.');
+            }).catch((error) => {
+                console.error('Error injecting content script:', error);
+            });
         }
     }
 });
