@@ -1,7 +1,7 @@
 body {
     width: 300px;
     height: 300px;
-    margin: 0;
+    margin: auto;
     font-family: "Helvetica", "Arial", sans-serif;
     background-color: rgb(178, 213, 173);
 }
