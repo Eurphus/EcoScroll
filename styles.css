@@ -3,7 +3,14 @@ body {
     height: 300px;
     margin: 0;
     font-family: "Helvetica", "Arial", sans-serif;
-    background-color: white;
+    background-color: rgb(178, 213, 173);
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+
 }
 
 #title-box {
@@ -15,4 +22,35 @@ body {
     text-align: center;
     align-content: center;
     margin: 0
+}
+
+/* Boxes */
+#boxes {
+    display: inline;
+}
+.box h2 {
+    color:rgb(56, 158, 92);
+}
+
+/* Images */
+#logos {
+   width: 300px;
+   height: 60px;
+   background-color:rgb(99, 157, 92);
+   border-radius: 10px 10px 0 0;
+   padding-top:8px
+}
+
+#home-logo {
+    width: 50px;
+    height: 50px;
+    float: left;
+    padding-left: 30px;
+}
+
+#settings-logo {
+    width: 50px;
+    height: 50px;
+    float: right;
+    padding-right:30px;
 }
