@@ -11,15 +11,37 @@ let initial_run = true;
 let countdown = 60;
 let count_injected = false;
 
+// Constants
+const YOUTUBE = 1
+const INSTAGRAM = 2
+const TIKTOK = 3
+
 
 //////////////////////////////
 // Listeners                //
 //////////////////////////////
 
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
-        if (initial_run === true){
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+
+
+    if (changeInfo.status === 'complete' && tab.url) {
+        let site = 0
+        if (tab.url.includes('tiktok.com/foryou') || (tab.url.includes('tiktok.com/@') && tab.url.includes('/video/'))) {
+            site = TIKTOK;
+        } else if (tab.url.includes('youtube.com/shorts')) {
+            site = YOUTUBE;
+        } else if(tab.url.includes('instagram.com/shorts')) {
+            site = INSTAGRAM;
+        } else {
+            return;
+        }
+        let d = await getSiteJSON(site);
+        console.log(d);
+        let f = await getPreviousURL(site)
+        console.log(f)
+
+        if (initial_run === true) {
             prev_url = tab.url;
             initial_run = false;
         }
@@ -121,6 +143,103 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 //////////////////////////////
-// Data Functions           //
+// General Data Functions   //
 //////////////////////////////
 
+async function getSiteJSON(site) {
+    let result;
+    switch (site) {
+        case YOUTUBE:
+            result = await chrome.storage.local.get(['youtube']);
+            break;
+        case INSTAGRAM:
+            result = await chrome.storage.local.get(["instagram"]);
+            break;
+        case TIKTOK:
+            result = await chrome.storage.local.get(["tiktok"]);
+            break;
+        default:
+            throw new Error('Unknown site selected')
+    }
+
+    return result;
+}
+
+////////////////////////////////
+// Data Retrieval Functions   //
+////////////////////////////////
+
+async function getCount(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.previousUrl;
+}
+
+async function getPreviousURL(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.previousUrl;
+}
+
+async function getTimerStarted(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.timerStarted;
+}
+
+async function getIntervalId(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.intervalId;
+}
+
+async function getTimeElapsed(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.timeElapsed;
+}
+
+async function getDownTime(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.downTime;
+}
+
+async function getTimeLimit(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.timeLimit;
+}
+
+async function getCountLimit(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.countLimit;
+}
+
+async function getInjected(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.injected;
+}
+
+async function getInitialRun(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.initialRun;
+}
+
+async function getCountdown(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.countdown;
+}
+
+async function getCountInjected(site) {
+    const result = await getSiteJSON(site)
+    return result.youtube.countInjected;
+}
+
+//////////////////////////////
+// Apply Data Functions     //
+//////////////////////////////
+
+function incrementCount(site) {
+    switch (site) {
+        case YOUTUBE:
+            break;
+        case INSTAGRAM:
+            break;
+        case TIKTOK:
+            break;
+    }
+}
