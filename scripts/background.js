@@ -5,7 +5,7 @@ let intervalId;
 let timeElapsed = 0;
 let down_time = 0;
 let time_limit = 20;
-let count_limit = 3
+let count_limit = 5;
 let injected = false;
 let initial_run = true;
 
@@ -20,8 +20,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             
             console.log('Contains', count);
         }
-        
-
     
         if (!timerStarted) {
             timerStarted = true;
