@@ -1,6 +1,10 @@
 let count = 0;
-let prev_url = ''
+let prev_url = '';
 let timerStarted = false;
+let intervalId;
+let timeElapsed = 0;
+let time_limit = 20;
+let count_limit = 3
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
@@ -10,33 +14,51 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         
         console.log('Contains', count);
 
+    
         if (!timerStarted) {
             timerStarted = true;
-            setTimeout(() => {
-                chrome.scripting.executeScript({
-                    target: { tabId: tabId },
-                    files: ['scripts/content.js']
-                }).then(() => {
-                    console.log('Content script injected after 20 seconds.');
-                }).catch((error) => {
-                    console.error('Error injecting content script:', error);
-                });
-            }, 20000); //20 second Timer
+            
+        
+            intervalId = setInterval(() => {
+                timeElapsed++;
+                console.log(`Time elapsed: ${timeElapsed} seconds`);
+
+                // inject after 20 secs
+                if (timeElapsed >= time_limit) {
+                    chrome.scripting.executeScript({
+                        target: { tabId: tabId },
+                        files: ['scripts/content.js']
+                    }).then(() => {
+                        console.log('Content script injected after 20 seconds.');
+                        clearInterval(intervalId); 
+                    }).catch((error) => {
+                        console.error('Error injecting content script:', error);
+                        clearInterval(intervalId); 
+                        timerStarted = false; 
+                        timeElapsed = 0;
+                    });
+                }
+            }, 1000); //1 second interval
         }
 
-        // Count is double the limit since each short iterates twice.
-        if (count === 6) {
+    //    count should be double of the actual limit
+        if (count === count_limit) {
             count = 0;
             chrome.scripting.executeScript({
                 target: { tabId: tabId },
                 files: ['scripts/content.js']
             }).then(() => {
                 console.log('Content script injected after count reached 6.');
+                clearInterval(intervalId); 
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
+                clearInterval(intervalId); 
+                timerStarted = false; 
+                timeElapsed = 0;
             });
         }
-        prev_url = tab.url
+
+        prev_url = tab.url;
     }
 });
 
