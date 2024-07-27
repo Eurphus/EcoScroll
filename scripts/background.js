@@ -3,8 +3,10 @@ let prev_url = '';
 let timerStarted = false;
 let intervalId;
 let timeElapsed = 0;
-let time_limit = 20;
+let down_time = 0;
+let time_limit = 10;
 let count_limit = 3
+let injected = false;
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
@@ -20,24 +22,32 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             
         
             intervalId = setInterval(() => {
-                timeElapsed++;
-                console.log(`Time elapsed: ${timeElapsed} seconds`);
+                if (injected === false){
+                    timeElapsed++;
+                    console.log(`Time elapsed: ${timeElapsed} seconds`);
 
-                // inject after 20 secs
-                if (timeElapsed >= time_limit) {
-                    chrome.scripting.executeScript({
-                        target: { tabId: tabId },
-                        files: ['scripts/content.js']
-                    }).then(() => {
-                        console.log('Content script injected after 20 seconds.');
-                        clearInterval(intervalId); 
-                    }).catch((error) => {
-                        console.error('Error injecting content script:', error);
-                        clearInterval(intervalId); 
-                        timerStarted = false; 
-                        timeElapsed = 0;
-                    });
+                    // inject after 20 secs
+                    if (timeElapsed >= time_limit) {
+                        chrome.scripting.executeScript({
+                            target: { tabId: tabId },
+                            files: ['scripts/content.js']
+                        }).then(() => {
+                            console.log('Content script injected after 20 seconds.');
+                            injected = true
+                            
+                        }).catch((error) => {
+                            console.error('Error injecting content script:', error);
+                            clearInterval(intervalId); 
+                            timerStarted = false; 
+                            timeElapsed = 0;
+                        });
+                    }
+                } else {
+                    down_time++;
+                    console.log(`Time down: ${down_time} seconds`);
+
                 }
+            
             }, 1000); //1 second interval
         }
 
