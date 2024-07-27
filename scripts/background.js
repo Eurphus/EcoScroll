@@ -11,6 +11,12 @@ let initial_run = true;
 let countdown = 60;
 let count_injected = false;
 
+
+//////////////////////////////
+// Listeners                //
+//////////////////////////////
+
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
         if (initial_run === true){
@@ -19,16 +25,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
         if (prev_url !== tab.url) {
             count++;
-            
+
             console.log('Contains', count);
         }
-    
+
         if (!timerStarted) {
             timerStarted = true;
-            
-        
+
+
             intervalId = setInterval(() => {
-                if (injected === false & count_injected === false){
+                if (injected === false && count_injected === false){
                     timeElapsed++;
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
@@ -41,11 +47,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                             console.log('Content script injected after time limit reached.');
                             injected = true
                             down_time = 0;
-                            
+
                         }).catch((error) => {
                             console.error('Error injecting content script:', error);
-                            clearInterval(intervalId); 
-                            timerStarted = false; 
+                            clearInterval(intervalId);
+                            timerStarted = false;
                             timeElapsed = 0;
                         });
                     }
@@ -54,11 +60,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     console.log(`Time down: ${down_time} seconds`);
 
                 }
-            
+
             }, 1000); //1 second interval
         }
 
-    //    count should be double of the actual limit
+        //    count should be double of the actual limit
         if (count === count_limit) {
             count = 0;
             chrome.scripting.executeScript({
@@ -68,11 +74,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 console.log('Content script injected after count limit reached');
                 count_injected = true;
                 down_time = 0;
-                
+
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
-                clearInterval(intervalId); 
-                timerStarted = false; 
+                clearInterval(intervalId);
+                timerStarted = false;
                 timeElapsed = 0;
             });
         }
@@ -88,8 +94,33 @@ chrome.runtime.onInstalled.addListener((details) => {
             url: "../pages/welcome.html"
         });
     } else if (details.reason === "update") {
+        /* Disable until testing is done
         chrome.tabs.create({
             active:true
         })
+        */
+        let json = {
+            count: 0,
+            previousUrl: '',
+            timerStarted: false,
+            intervalId: -1,
+            timeElapsed: 0,
+            downTime: 0,
+            timeLimit: 0,
+            countLimit: 0,
+            injected: true,
+            initialRun: true,
+            countdown: 60,
+            countInjected: false
+        }
+
+        chrome.storage.local.set({ youtube: json });
+        chrome.storage.local.set({ instagram: json });
+        chrome.storage.local.set({ tiktok: json });
     }
 });
+
+//////////////////////////////
+// Data Functions           //
+//////////////////////////////
+
