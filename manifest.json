@@ -2,7 +2,7 @@
   "name": "EcoScroll",
   "version": "1.0.0",
   "description": "Eco-friendly Social Media use moderator",
-  "manifest_version": 3
+  "manifest_version": 3,
     "permissions": [
         "tabs"
     ],
