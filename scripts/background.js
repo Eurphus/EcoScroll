@@ -3,6 +3,8 @@ let prev_url = '';
 let timerStarted = false;
 let intervalId;
 let timeElapsed = 0;
+let time_limit = 20;
+let count_limit = 3
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
@@ -22,7 +24,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                 // inject after 20 secs
-                if (timeElapsed >= 20) {
+                if (timeElapsed >= time_limit) {
                     chrome.scripting.executeScript({
                         target: { tabId: tabId },
                         files: ['scripts/content.js']
@@ -40,7 +42,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
 
     //    count should be double of the actual limit
-        if (count === 3) {
+        if (count === count_limit) {
             count = 0;
             chrome.scripting.executeScript({
                 target: { tabId: tabId },
