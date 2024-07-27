@@ -31,13 +31,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                         clearInterval(intervalId); 
                     }).catch((error) => {
                         console.error('Error injecting content script:', error);
+                        clearInterval(intervalId); 
+                        timerStarted = false; 
+                        timeElapsed = 0;
                     });
                 }
             }, 1000); //1 second interval
         }
 
     //    count should be double of the actual limit
-        if (count === 6) {
+        if (count === 3) {
             count = 0;
             chrome.scripting.executeScript({
                 target: { tabId: tabId },
@@ -47,6 +50,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 clearInterval(intervalId); 
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
+                clearInterval(intervalId); 
+                timerStarted = false; 
+                timeElapsed = 0;
             });
         }
 
