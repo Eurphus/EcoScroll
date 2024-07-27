@@ -1,0 +1,18 @@
+body {
+    width: 300px;
+    height: 300px;
+    margin: 0;
+    font-family: "Helvetica", "Arial", sans-serif;
+    background-color: white;
+}
+
+#title-box {
+    border-radius: 0 0 10px 10px;
+    background: green;
+    width: auto;
+    height: 50px;
+    color: white;
+    text-align: center;
+    align-content: center;
+    margin: 0
+}
