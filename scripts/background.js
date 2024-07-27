@@ -4,7 +4,7 @@ let timerStarted = false;
 let intervalId;
 let timeElapsed = 0;
 let down_time = 0;
-let time_limit = 10;
+let time_limit = 20;
 let count_limit = 3
 let injected = false;
 let initial_run = true;
@@ -64,7 +64,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 target: { tabId: tabId },
                 files: ['scripts/content.js']
             }).then(() => {
-                console.log('Content script injected after count reached 6.');
+                console.log('Content script injected after count reached 3.');
                 clearInterval(intervalId); 
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
