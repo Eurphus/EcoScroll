@@ -8,6 +8,8 @@ let time_limit = 20;
 let count_limit = 5;
 let injected = false;
 let initial_run = true;
+let countdown = 60;
+let count_injected = false;
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('https://www.youtube.com/shorts/')) {
@@ -26,7 +28,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             
         
             intervalId = setInterval(() => {
-                if (injected === false){
+                if (injected === false & count_injected === false){
                     timeElapsed++;
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
@@ -36,8 +38,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                             target: { tabId: tabId },
                             files: ['scripts/content.js']
                         }).then(() => {
-                            console.log('Content script injected after 20 seconds.');
+                            console.log('Content script injected after time limit reached.');
                             injected = true
+                            down_time = 0;
                             
                         }).catch((error) => {
                             console.error('Error injecting content script:', error);
@@ -62,8 +65,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 target: { tabId: tabId },
                 files: ['scripts/content.js']
             }).then(() => {
-                console.log('Content script injected after count reached 3.');
-                clearInterval(intervalId); 
+                console.log('Content script injected after count limit reached');
+                count_injected = true;
+                down_time = 0;
+                
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
                 clearInterval(intervalId); 
