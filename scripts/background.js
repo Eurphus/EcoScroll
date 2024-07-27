@@ -19,3 +19,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
     }
 });
+
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === "install") {
+        chrome.tabs.create({
+            active: true,
+            url: "../pages/welcome.html"
+        });
+    } else if (details.reason === "update") {
+        chrome.tabs.create({
+            active:true
+        })
+    }
+});
