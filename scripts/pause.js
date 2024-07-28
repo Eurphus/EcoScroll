@@ -47,26 +47,34 @@ function showPopup(video) {
     popup.style.backgroundColor = 'white';
     popup.style.border = '1px solid black';
     popup.style.zIndex = '1000';
-    popup.style.width = '700px';  // Adjust the width as needed
-    popup.style.height = '500px';
+    popup.style.width = '1000px';  // Adjust the width as needed
+    popup.style.height = '600px';
+    popup.style.textAlign = 'center';
+    popup.style.backgroundImage = 'url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXNuanJ1c2R5cWttdTlubW5pMGRiZmhlaTl3dTIxN2pqa215bzVwaiZlcD12MV9pbnRlcm5fZ2lmX2J5X2lkJmN0PWc/xUA7b9HAKGRDT3Rfsk/giphy.gif")';
+    popup.style.backgroundSize = 'cover';
+    popup.style.backgroundPosition = 'center';
 
     var message = document.createElement('p');
     message.id = 'countdownMessage';
-    popup.appendChild(message);
+    message.style.color = 'white';
+    message.style.fontSize = '24px';
+    message.style.textAlign = 'center';
+    message.style.marginTop = '240px'; // Adjust to position the text vertically centered
 
+    popup.appendChild(message);
     document.body.appendChild(popup);
 
     // Fetch the countdown value from the background script
     chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
         var countdown = response.countdown || 10; // Default to 10 seconds if not set
 
-        message.innerText = `Video paused. Resuming in ${countdown} seconds.`;
+        message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
 
         // Update the countdown every second
         var countdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
-                message.innerText = `Video paused. Resuming in ${countdown} seconds.`;
+                message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
             } else {
                 clearInterval(countdownInterval);
                 // Unpause the video
