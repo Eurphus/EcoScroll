@@ -6,9 +6,21 @@ import {
     TIKTOK,
     YOUTUBE
 } from "./data.js";
-// Non-Cache
-let intervalId;
 
+import { default_json } from "../config.js";
+// Non-Cache
+let intervalId; // Temp variable
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Listeners                                                                                                          //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * Listen to custom message sent at runtime.
+ * Allows tracking of countdown tabs
+ *
+ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'getCountdown') {
         (async () => {
@@ -20,18 +32,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-function determineSite(url) {
-    if (url.includes('tiktok.com/foryou') || (url.includes('tiktok.com/@') && url.includes('/video/'))) {
-        return TIKTOK;
-    } else if (url.includes('youtube.com/shorts')) {
-        return YOUTUBE;
-    } else if (url.includes('instagram.com/reels')) {
-        return INSTAGRAM;
-    } else {
-        return null;
-    }
-}
-
+/**
+ * Main tab tracker.
+ * Detects updates in tabs, determines if it is a eligible site and actions appropriately
+ *
+ */
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url) {
         let site = determineSite(tab.url);
@@ -130,31 +135,52 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     }
 });
 
+/**
+ * Runs on installation or update of the extension
+ * Sets up initial permissions & welcome, along with updates
+ *
+ */
 chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === "install") {
         chrome.tabs.create({
             active: true,
             url: "../pages/welcome.html"
         });
+        setConfig();
     } else if (details.reason === "update") {
-        let json = {
-            count: 0,
-            previousUrl: '',
-            timerStarted: false,
-            intervalId: -1,
-            timeElapsed: 0,
-            downTime: 0,
-            timeLimit: 15,
-            countLimit: 5,
-            injected: false,
-            initialRun: true,
-            countdown: 15,
-            countInjected: false,
-            currentlyPaused: false
-        };
-
-        chrome.storage.local.set({ youtube: json });
-        chrome.storage.local.set({ instagram: json });
-        chrome.storage.local.set({ tiktok: json });
+        setConfig();
     }
 });
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper Functions                                                                                                   //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Detects if it is a eligible website, assigns id.
+ *
+ * @param url
+ * @returns {number|null}
+ */
+function determineSite(url) {
+    if (url.includes('tiktok.com/foryou') || (url.includes('tiktok.com/@') && url.includes('/video/'))) {
+        return TIKTOK;
+    } else if (url.includes('youtube.com/shorts')) {
+        return YOUTUBE;
+    } else if (url.includes('instagram.com/reels')) {
+        return INSTAGRAM;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Sets the default json object for the sites.
+ *
+ * @returns {void}
+ */
+function setConfig() {
+    chrome.storage.local.set({ youtube: default_json });
+    chrome.storage.local.set({ instagram: default_json });
+    chrome.storage.local.set({ tiktok: default_json });
+}
