@@ -61,95 +61,23 @@ export async function setKey(site, key, input) {
 export async function incrementCount(site) {
     let count = await getKey(site, 'count');
     count += 1;
-    setCount(site, count);
+    setKey(site, 'count', count);
 }
 
 export async function incrementTimeElapsed(site) {
     let time = await getKey(site, 'timeElapsed');
     time += 1;
-    setTimeElapsed(site, time);
+    setKey(site, 'timeElapsed', time);
 }
 
 export async function incrementDownTime(site) {
     let time = await getKey(site, 'downTime');
     time += 1;
-    setDownTime(site, time);
+    setKey(site, 'downTime', time);
 }
 
 export async function decrementCountdown(site) {
     let time = await getKey(site, 'countdown');
     time -= 1;
-    setCountdown(site, time);
-}
-
-export async function setCount(site, input) {
-    const result = await getSiteJSON(site);
-    result.count = input;
-    applySetting(site, result);
-}
-
-export async function setPreviousURL(site, input) {
-    const result = await getSiteJSON(site);
-    result.previousUrl = input;
-    applySetting(site, result);
-}
-
-export async function setTimerStarted(site, input) {
-    const result = await getSiteJSON(site);
-    result.timerStarted = input;
-    applySetting(site, result);
-}
-
-export async function setTimeElapsed(site, input) {
-    const result = await getSiteJSON(site);
-    result.timeElapsed = input;
-    applySetting(site, result);
-}
-
-export async function setDownTime(site, input) {
-    const result = await getSiteJSON(site);
-    result.downTime = input;
-    applySetting(site, result);
-}
-
-export async function setTimeLimit(site, input) {
-    const result = await getSiteJSON(site);
-    result.timeLimit = input;
-    applySetting(site, result);
-}
-
-export async function setCountLimit(site, input) {
-    const result = await getSiteJSON(site);
-    result.countLimit = input;
-    applySetting(site, result);
-}
-
-export async function setInjected(site, input) {
-    const result = await getSiteJSON(site);
-    result.injected = input;
-    applySetting(site, result);
-}
-
-export async function setInitialRun(site, input) {
-    const result = await getSiteJSON(site);
-    result.initialRun = input;
-    applySetting(site, result);
-}
-
-export async function setCountdown(site, input) {
-    const result = await getSiteJSON(site);
-    result.countdown = input;
-    applySetting(site, result);
-}
-
-export async function setCountInjected(site, input) {
-    const result = await getSiteJSON(site);
-    result.countInjected = input;
-    applySetting(site, result);
-}
-
-export async function setCurrentlyPaused(site, input) {
-    const result = await getSiteJSON(site);
-    result.currentlyPaused = input;
-    applySetting(site, result);
+    setKey(site, 'countdown', time);
 }
