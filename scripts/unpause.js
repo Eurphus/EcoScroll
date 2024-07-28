@@ -2,34 +2,40 @@ console.log('unpause.js script loaded and running.');
 
 var unpauseObserver; // Ensure unpauseObserver is globally scoped
 
-// Function to restore video functionality
-function restoreVideo(video) {
-    if (video) {
-        // Restore the original play method if it was stored
-        if (video.originalPlay) {
-            video.play = video.originalPlay;
-            delete video.originalPlay;
-        }
+// Function to unpause the video and remove the popup
+function unpauseVideo(video) {
+    if (video && pausedVideos.has(video)) {
+        video.play = video.originalPlay;
+        video.play();
 
-        // Show the controls
+        // Restore controls
         video.controls = true;
 
         console.log('Video unpaused and lock removed.');
 
-        // Ensure the video resumes playing if it was paused
-        if (video.paused) {
-            video.play();
-        }
-
-        // Remove the popup notification
+        // Remove the popup
         var popup = document.getElementById('videoPausePopup');
         if (popup) {
             document.body.removeChild(popup);
         }
+
+        // Remove the video from the paused set
+        pausedVideos.delete(video);
     } else {
-        console.error('No video element found.');
+        console.error('No video element found to unpause.');
     }
 }
+
+// Function to unpause all videos
+function unpauseAllVideos() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+        unpauseVideo(video);
+    });
+}
+
+// Initial enforcement on existing video elements
+unpauseAllVideos();
 
 // Disconnect the pause observer if it exists
 if (window.pauseObserver) {
@@ -37,20 +43,9 @@ if (window.pauseObserver) {
     console.log('Pause observer stopped.');
 }
 
-// Function to restore all video elements
-function unlockAllVideos() {
-    const videos = document.querySelectorAll('video');
-    videos.forEach(video => {
-        restoreVideo(video);
-    });
-}
-
-// Initial restoration on existing video elements
-unlockAllVideos();
-
 // Monitor for new video elements (e.g., if the user navigates to another video)
 unpauseObserver = new MutationObserver(() => {
-    unlockAllVideos();
+    unpauseAllVideos();
 });
 
 unpauseObserver.observe(document.body, { childList: true, subtree: true });
