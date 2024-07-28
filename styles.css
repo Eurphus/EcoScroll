@@ -280,5 +280,8 @@ body {
 
 
 #logo {
-    float:left;
+    height:30px;
+    width: 15px;
+    margin-left: 20px;
+    margin-top: 7px;
 }
