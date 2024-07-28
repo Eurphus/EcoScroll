@@ -60,6 +60,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         if (!(await getTimerStarted(site))) {
             setTimerStarted(site, true)
             intervalId = setInterval(async () => {
+                console.log(getCountInjected(site))
                 if (await getInjected(site) === false && await getCountInjected(site) === false) {
                     await incrementTimeElapsed(site)
                     const timeElapsed = await getTimeElapsed(site)
@@ -76,6 +77,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             setCountInjected(site,true)
                             setDownTime(site, 0);
                             setCountdown(site, 10);
+                            setTimeElapsed(site, 0);
                         }).catch((error) => {
                             console.error('Error injecting content script:', error);
                             clearInterval(intervalId);
