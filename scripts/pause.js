@@ -47,19 +47,56 @@ function showPopup(video) {
     popup.style.backgroundColor = 'white';
     popup.style.border = '1px solid black';
     popup.style.zIndex = '1000';
+    popup.style.width = '700px';  // Adjust the width as needed
+    popup.style.height = '500px';
 
     var message = document.createElement('p');
-    message.innerText = 'Video paused. Click OK to continue.';
+    message.id = 'countdownMessage';
     popup.appendChild(message);
 
-    var button = document.createElement('button');
-    button.innerText = 'OK';
-    button.onclick = function() {
-        console.log('Please run the unpause script to resume the video.');
-    };
-    popup.appendChild(button);
-
     document.body.appendChild(popup);
+
+    // Fetch the countdown value from the background script
+    chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
+        var countdown = response.countdown || 10; // Default to 10 seconds if not set
+
+        message.innerText = `Video paused. Resuming in ${countdown} seconds.`;
+
+        // Update the countdown every second
+        var countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                message.innerText = `Video paused. Resuming in ${countdown} seconds.`;
+            } else {
+                clearInterval(countdownInterval);
+                // Unpause the video
+                unpauseVideo(video, popup);
+            }
+        }, 1000);
+    });
+}
+
+// Function to unpause the video and remove the popup
+function unpauseVideo(video, popup) {
+    if (video && pausedVideos.has(video)) {
+        video.play = video.originalPlay;
+        video.play();
+
+        // Restore controls
+        video.controls = true;
+
+        console.log('Video unpaused and lock removed.');
+
+        // Remove the popup
+        if (popup) {
+            document.body.removeChild(popup);
+        }
+
+        // Remove the video from the paused set
+        pausedVideos.delete(video);
+    } else {
+        console.error('No video element found to unpause.');
+    }
 }
 
 // Disconnect the unpause observer if it exists
@@ -80,3 +117,10 @@ function lockAllVideos() {
 lockAllVideos();
 
 // Monitor for new video elements (e.g., if the user navigates to another video)
+pauseObserver = new MutationObserver(() => {
+    lockAllVideos();
+});
+
+pauseObserver.observe(document.body, { childList: true, subtree: true });
+
+window.pauseObserver = pauseObserver; // Make sure it is accessible globally
