@@ -14,5 +14,7 @@ export const default_json = {
     countInjected: false,
     currentlyPaused: false,
     // Stat Related
-    shortsWatched: 0
+    shortsWatched: 0,
+    timeSelected: true,
+    countSelected: true
 }

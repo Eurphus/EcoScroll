@@ -4,7 +4,7 @@ import {
     INSTAGRAM,
     setKey,
     TIKTOK,
-    YOUTUBE
+    YOUTUBE,
 } from "./data.js";
 
 import { default_json } from "../config.js";
@@ -64,23 +64,26 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                     // inject after 20 secs
-                    if (timeElapsed >= await getKey(site, 'timeLimit')) {
-                        chrome.scripting.executeScript({
-                            target: {tabId: tabId},
-                            files: ['scripts/pause.js']
-                        }).then(async () => {
-                            console.log('Content script injected after time limit reached.');
-                            await setKey(site, 'injected', true);
-                            await setKey(site, 'countInjected', true);
-                            await setKey(site, 'countdown', 15);
-                            await setKey(site, 'timeElapsed', 0);
-                        }).catch(async (error) => {
-                            console.error('Error injecting content script:', error);
-                            clearInterval(intervalId);
-                            setKey(site, 'timerStarted', false);
-
-                        });
+                    if (timeSelected === true){
+                        if (timeElapsed >= await getKey(site, 'timeLimit')) {
+                            chrome.scripting.executeScript({
+                                target: {tabId: tabId},
+                                files: ['scripts/pause.js']
+                            }).then(async () => {
+                                console.log('Content script injected after time limit reached.');
+                                await setKey(site, 'injected', true);
+                                await setKey(site, 'countInjected', true);
+                                await setKey(site, 'countdown', 15);
+                                await setKey(site, 'timeElapsed', 0);
+                            }).catch(async (error) => {
+                                console.error('Error injecting content script:', error);
+                                clearInterval(intervalId);
+                                setKey(site, 'timerStarted', false);
+    
+                            });
+                        }
                     }
+                    
                 } else {
                     await incrementDownTime(site);
                     await decrementCountdown(site);
@@ -110,23 +113,26 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
 
         //    count should be double of the actual limit
-        if (await getKey(site, 'count') === await getKey(site, 'countLimit')) {
-            await setKey(site, 'count', 0)
-            chrome.scripting.executeScript({
-                target: {tabId: tabId},
-                files: ['scripts/pause.js']
-            }).then(async () => {
-                console.log('Content script injected after count limit reached');
-                await setKey(site, 'injected', true);
-                await setKey(site, 'currentlyPaused', true);
-                await setKey(site, 'countdown', 15);
-            }).catch(async (error) => {
-                console.error('Error injecting content script:', error);
-                clearInterval(intervalId);
-                await setKey(site, 'timeStarted', false);
-                await setKey(site, 'timeElapsed', 0);
-            });
+        if (countSelected === true){
+            if (await getKey(site, 'count') === await getKey(site, 'countLimit')) {
+                await setKey(site, 'count', 0)
+                chrome.scripting.executeScript({
+                    target: {tabId: tabId},
+                    files: ['scripts/pause.js']
+                }).then(async () => {
+                    console.log('Content script injected after count limit reached');
+                    await setKey(site, 'injected', true);
+                    await setKey(site, 'currentlyPaused', true);
+                    await setKey(site, 'countdown', 15);
+                }).catch(async (error) => {
+                    console.error('Error injecting content script:', error);
+                    clearInterval(intervalId);
+                    await setKey(site, 'timeStarted', false);
+                    await setKey(site, 'timeElapsed', 0);
+                });
+            }
         }
+        
 
         await setKey(site, 'previousUrl', tab.url);
     }
