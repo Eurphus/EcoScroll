@@ -47,8 +47,8 @@ function showPopup(video) {
     popup.style.backgroundColor = 'white';
     popup.style.border = '1px solid black';
     popup.style.zIndex = '1000';
-    popup.style.width = '960px';  // Adjust the width as needed
-    popup.style.height = '542px';
+    popup.style.width = '1000px';  // Adjust the width as needed
+    popup.style.height = '600px';
     popup.style.textAlign = 'center';
     popup.style.backgroundImage = 'url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXNuanJ1c2R5cWttdTlubW5pMGRiZmhlaTl3dTIxN2pqa215bzVwaiZlcD12MV9pbnRlcm5fZ2lmX2J5X2lkJmN0PWc/xUA7b9HAKGRDT3Rfsk/giphy.gif")';
     popup.style.backgroundSize = 'cover';
