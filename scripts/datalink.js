@@ -1,17 +1,17 @@
-import * as mod from "./data.js";
+import { INSTAGRAM, YOUTUBE, TIKTOK, getKey } from "./data.js";
 
 // gets each scroll count for each platform and outputs it to the frontend
 
 window.onload = setInterval(async function () {
-    var instagramCount = await mod.getKey(mod.INSTAGRAM, 'count');
+    let instagramCount = await getKey(INSTAGRAM, 'shortsWatched');
     document.getElementById("instagram-result").textContent = instagramCount + " Videos Watched";
 
-    var youtubeCount = await mod.getKey(mod.YOUTUBE, 'count');
+    let youtubeCount = await getKey(YOUTUBE, 'shortsWatched');
     document.getElementById("youtube-result").textContent = youtubeCount + " Videos Watched";
 
-    var tiktokCount = await mod.getKey(mod.TIKTOK, 'count');
+    let tiktokCount = await getKey(TIKTOK, 'shortsWatched');
     document.getElementById("tiktok-result").textContent = tiktokCount + " Videos Watched";
 
-    // var currentScrolls = await mod.getKey(mod.GLOBAL, 'count');
+    // var currentScrolls = await getKey(GLOBAL, 'count');
     // document.getElementById("scrolls-left").textContent = 
-});
+}, 200);

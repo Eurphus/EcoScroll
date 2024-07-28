@@ -123,14 +123,14 @@ export async function setKey(site, key, input) {
 }
 
 /**
- * Updates the global shorts count.
+ * Updates the shortsCount.
  *
  * @returns {Promise<void>}
  */
-export async function updateGlobalCount() {
-    let count = await getKey(GLOBAL, 'shortsWatched');
+export async function updateShortsCount(site) {
+    let count = await getKey(site, 'shortsWatched');
     count += 1;
-    setKey(GLOBAL, 'shortsWatched', count);
+    await setKey(site, 'shortsWatched', count);
 }
 
 /**
@@ -143,6 +143,7 @@ export async function incrementCount(site) {
     let count = await getKey(site, 'count');
     count += 1;
     await setKey(site, 'count', count);
-    await updateGlobalCount();
+    await updateShortsCount(site);
+    await updateShortsCount(GLOBAL);
 }
 
