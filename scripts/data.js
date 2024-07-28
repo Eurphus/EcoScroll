@@ -51,6 +51,33 @@ export async function getKey(site, key) {
     return result[key];
 }
 
+/**
+ * Gets current date plus addition seconds in number format
+ *
+ * @param addition
+ * @returns {number}
+ */
+export function getDate(addition) {
+    let date = Number(new Date());
+    date += addition * 1000 // addition represents seconds, converts to ms
+    return date;
+}
+
+/**
+ * Returns the number of seconds left of a duration
+ *
+ * @param futureDate
+ * @returns {number}
+ */
+export function getDuration(futureDate) {
+    let date = Number(new Date());
+
+    let duration = futureDate - date
+    duration /= 1000;
+    duration = Math.round(duration);
+    return duration
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Data Modifiers                                                                                                     //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
