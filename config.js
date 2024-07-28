@@ -4,7 +4,6 @@ export const default_json = {
     count: 0,
     previousUrl: '',
     timerStarted: false,
-    intervalId: -1,
     timeElapsed: 0,
     downTime: 0,
     injected: false,
@@ -13,9 +12,9 @@ export const default_json = {
     currentlyPaused: false,
     countdown: 0,
     // Persistent Settings
-    timeLimit: 5,
+    timeLimit: 10,
     countLimit: 5,
-    countdownMax: 5,
+    countdownMax: 10,
     timeSelected: true,
     countSelected: true,
     // Stats
