@@ -26,13 +26,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'getCountdown') {
         (async () => {
             const site = determineSite(sender.tab.url);
-            let countdown = getDuration(await getKey(site, 'countdown'));
+            let date = await getKey(site, 'countdown')
+            let countdown = getDuration(date);
 
             // Corrects errors with poor predication and overflow due to late updating
             if (countdown < 0 || countdown > await getKey(site, 'countdownMax')) {
                 countdown = 0;
             }
-            sendResponse({ countdown: countdown });
+            sendResponse({ countdown: countdown, date: date });
         })();
         return true; // Indicates that the response is sent asynchronously
     }
@@ -74,10 +75,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                         && timeElapsed >= await getKey(site, 'timeLimit')) {
                         await setKey(site, 'countdown', getDate(await getKey(site, 'countdownMax'))); // Current date plus the max seconds
                         chrome.scripting.executeScript({
-                            target: {tabId: tabId},
+                            target: { tabId: tabId },
                             files: ['scripts/pause.js']
                         }).then(async () => {
                             console.log('Content script injected after time limit reached.');
+                            //await setKey(site, 'countdown', 0)
                             await setKey(site, 'injected', true);
                             await setKey(site, 'countInjected', true);
                             //await setKey(site, 'downTime', 0);
@@ -104,7 +106,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             await setKey(site, 'countInjected', false); // Allow future count-based injections
                             await setKey(site, 'injected', false); // Allow future time-based injections
                             //await setKey(site, 'downTime', 0); // Reset downtime
-                            await setKey(site, 'currentlyPaused', true);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
                             console.error('Error injecting unpause content script:', error);

@@ -1,11 +1,10 @@
 console.log('pause.js script loaded and running.');
 
-let pauseObserver; // Ensure pauseObserver is globally scoped
-let pausedVideos = new WeakSet(); // Track paused videos
+window.pausedVideos = new WeakSet()
 
 // Function to enforce pause and lock on a video element
 function enforcePause(video) {
-    if (video && !pausedVideos.has(video)) {
+    if (video && !window.pausedVideos.has(video)) {
         video.pause();
 
         // Store the original play method
@@ -24,11 +23,11 @@ function enforcePause(video) {
         console.log('Video paused and lock enforced.');
 
         // Mark this video as paused
-        pausedVideos.add(video);
+        window.pausedVideos.add(video);
 
         // Show a popup notification
         showPopup(video);
-    } else if (pausedVideos.has(video)) {
+    } else if (window.pausedVideos.has(video)) {
         console.log('Video already paused, skipping:', video);
     } else {
         console.error('No video element found.');
@@ -36,7 +35,7 @@ function enforcePause(video) {
 }
 
 // Function to show a popup notification
-function showPopup(video) {
+function showPopup() {
     let popup = document.createElement('div');
     popup.id = 'videoPausePopup';
     popup.style.position = 'fixed';
@@ -66,49 +65,23 @@ function showPopup(video) {
 
     // Fetch the countdown value from the background script
     chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
-        let countdown = response.countdown; // Default to 10 seconds if not set
-
-        if (message.innerText !== `Take a deep breath and relax. Resuming in ${countdown} seconds.`) {
-            message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
-        }
+        let countdown = response.countdown;
+        message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
 
         // Update the countdown every second
         let countdownInterval = setInterval( () => {
-            chrome.runtime.sendMessage({ action: 'getCountdown '}, (countdown) => {
-                if (countdown >= 0) {
-                    if (message.innerText !== `Take a deep breath and relax. Resuming in ${countdown} seconds.`) {
-                        message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
-                    }
+            chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
+                let countdown = response.countdown;
+                let date = response.date;
+                if (date >= Number(new Date())) {
+                    message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
                 } else {
-                    unpauseVideo(video, popup);
+                    pauseObserver.disconnect();
                     clearInterval(countdownInterval);
                 }
             })
         }, 1000);
     });
-}
-
-// Function to unpause the video and remove the popup
-function unpauseVideo(video, popup) {
-    if (video && pausedVideos.has(video)) {
-        video.play = video.originalPlay;
-        video.play();
-
-        // Restore controls
-        video.controls = true;
-
-        console.log('Video unpaused and lock removed.');
-
-        // Remove the popup
-        if (popup) {
-            document.body.removeChild(popup);
-        }
-
-        // Remove the video from the paused set
-        pausedVideos.delete(video);
-    } else {
-        console.error('No video element found to unpause.');
-    }
 }
 
 // Disconnect the unpause observer if it exists
