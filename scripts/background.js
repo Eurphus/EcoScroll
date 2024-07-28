@@ -1,10 +1,11 @@
 import {
-    getCount,
+    decrementCountdown,
+    getCount, getCountdown,
     getCountInjected, getCountLimit,
     getDownTime, getInjected, getPreviousURL,
     getTimeElapsed, getTimeLimit, getTimerStarted, incrementCount, incrementDownTime, incrementTimeElapsed,
-    INSTAGRAM, setCount,
-    setCountInjected,
+    INSTAGRAM, setCount, setCountdown,
+    setCountInjected, setCurrentlyPaused,
     setDownTime, setInitialRun, setInjected, setPreviousURL, setTimeElapsed,
     setTimerStarted,
     TIKTOK,
@@ -39,7 +40,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             site = TIKTOK;
         } else if (tab.url.includes('youtube.com/shorts')) {
             site = YOUTUBE;
-        } else if (tab.url.includes('instagram.com/shorts')) {
+        } else if (tab.url.includes('instagram.com/reels')) {
             site = INSTAGRAM;
         } else {
             return;
@@ -73,7 +74,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             console.log('Content script injected after time limit reached.');
                             setInjected(site, true)
                             setDownTime(site, 0);
-
+                            setCountdown(site, 10);
                         }).catch((error) => {
                             console.error('Error injecting content script:', error);
                             clearInterval(intervalId);
@@ -83,9 +84,30 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     }
                 } else {
                     await incrementDownTime(site);
+                    await decrementCountdown(site);
                     console.log(`Time down: ${await getDownTime(site)} seconds`);
-                }
+                    console.log(`Countdown: ${await getCountdown(site)} seconds`);
 
+                    // Unpause after countdown reaches zero
+                    if (await getCountdown(site) <= 0) {
+                        chrome.scripting.executeScript({
+                            target: { tabId: tabId },
+                            files: ['scripts/unpause.js']
+                        }).then(() => {
+                            console.log('Content script injected to unpause.');
+                            setCountInjected(site, false); // Allow future count-based injections
+                            setInjected(site, false); // Allow future time-based injections
+                            setDownTime(site, 0); // Reset downtime
+                            setCurrentlyPaused(site, true);
+                            setTimeElapsed(site, 0);
+                        }).catch((error) => {
+                            console.error('Error injecting unpause content script:', error);
+                            clearInterval(intervalId);
+                            setTimerStarted(site, false);
+                            setTimeElapsed(site, 0);
+                        });
+                    }
+                }
             }, 1000); //1 second interval
         }
 
@@ -136,7 +158,8 @@ chrome.runtime.onInstalled.addListener((details) => {
             injected: true,
             initialRun: true,
             countdown: 60,
-            countInjected: false
+            countInjected: false,
+            currentlyPaused: false
         }
 
         chrome.storage.local.set({youtube: json});

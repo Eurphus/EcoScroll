@@ -14,16 +14,13 @@ export async function getSiteJSON(site) {
     let result;
     switch (site) {
         case YOUTUBE:
-            result = await chrome.storage.local.get(['youtube']);
-            result = result.youtube;
+            result = (await chrome.storage.local.get(['youtube'])).youtube;
             break;
         case INSTAGRAM:
-            result = await chrome.storage.local.get(["instagram"]).instagram;
-            result = result.instagram;
+            result = (await chrome.storage.local.get(["instagram"])).instagram;
             break;
         case TIKTOK:
-            result = await chrome.storage.local.get(["tiktok"]).tiktok;
-            result = result.tiktok;
+            result = (await chrome.storage.local.get(["tiktok"])).tiktok;
             break;
         default:
             throw new Error('Unknown site selected')
@@ -38,7 +35,7 @@ export async function getSiteJSON(site) {
 
 export async function getCount(site) {
     const result = await getSiteJSON(site)
-    return result.previousUrl;
+    return result.count;
 }
 
 export async function getPreviousURL(site) {
@@ -91,6 +88,11 @@ export async function getCountInjected(site) {
     return result.countInjected;
 }
 
+export async function getCurrentlyPaused(site) {
+    const result = await getSiteJSON(site)
+    return result.currentlyPaused;
+}
+
 //////////////////////////////
 // Apply Data Functions     //
 //////////////////////////////
@@ -125,6 +127,12 @@ export async function incrementDownTime(site) {
     let time = await getDownTime(site);
     time += 1;
     setDownTime(site, time);
+}
+
+export async function decrementCountdown(site) {
+    let time = await getCountdown(site);
+    time -= 1;
+    setCountdown(site, time);
 }
 
 export async function setCount(site, input) {
@@ -190,5 +198,11 @@ export async function setCountdown(site, input) {
 export async function setCountInjected(site, input) {
     const result = await getSiteJSON(site);
     result.countInjected = input;
+    applySetting(site, result);
+}
+
+export async function setCurrentlyPaused(site, input) {
+    const result = await getSiteJSON(site);
+    result.currentlyPaused = input;
     applySetting(site, result);
 }
