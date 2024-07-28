@@ -86,8 +86,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             await console.log('Content script injected after time limit reached.');
                             await setInjected(site, true);
                             await setCountInjected(site, true);
-                            await setDownTime(site, 0);
-                            await setCountdown(site, 10);
+                            await setCountdown(site, 15);
                             await setTimeElapsed(site, 0);
                         }).catch(async (error) => {
                             console.error('Error injecting content script:', error);
@@ -99,8 +98,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 } else {
                     await incrementDownTime(site);
                     await decrementCountdown(site);
-                    console.log(`Time down: ${await getDownTime(site)} seconds`);
-                    console.log(`Countdown: ${await getCountdown(site)} seconds`);
+                    await console.log(`Time down: ${await getDownTime(site)} seconds`);
+                    await console.log(`Countdown: ${await getCountdown(site)} seconds`);
 
                     // Unpause after countdown reaches zero
                     if (await getCountdown(site) <= 0) {
@@ -133,10 +132,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 files: ['scripts/pause.js']
             }).then(async () => {
                 await console.log('Content script injected after count limit reached');
-                await setInjected(site, false); // Allow future time-based injections
-                await setDownTime(site, 0); // Reset downtime
+                await setInjected(site, true); // Allow future time-based injections
                 await setCurrentlyPaused(site, true);
                 await setTimeElapsed(site, 0);
+                await setCountdown(site, 15);
             }).catch(async (error) => {
                 console.error('Error injecting content script:', error);
                 await clearInterval(intervalId);
