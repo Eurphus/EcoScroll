@@ -136,8 +136,8 @@ body {
     width: 40px;
     height: 33px;
     border-radius: 6px;
-    background: #002a3d;
-    box-shadow: 4px 4px 0px #003646, 7px 7px 0px #277260, 9px 9px 0px #64ffbe;
+    background: #1c1c1c;
+    /*box-shadow: 4px 4px 0px #003646, 7px 7px 0px #277260, 9px 9px 0px #64ffbe;*/
     position: absolute;
     top: 20px;
     left: 20px;
@@ -280,8 +280,8 @@ body {
 
 
 #logo {
-    height:30px;
-    width: 15px;
-    margin-left: 20px;
-    margin-top: 7px;
+    height: 45px;
+    width: 22px;
+    margin-left: 17px;
+    margin-bottom: 10px;
 }
