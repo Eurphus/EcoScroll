@@ -1,141 +1,132 @@
 import {
     decrementCountdown,
-    getCount, getCountdown,
-    getCountInjected, getCountLimit,
-    getDownTime, getInjected, getPreviousURL,
-    getTimeElapsed, getTimeLimit, getTimerStarted, incrementCount, incrementDownTime, incrementTimeElapsed,
-    INSTAGRAM, setCount, setCountdown,
-    setCountInjected, setCurrentlyPaused,
-    setDownTime, setInitialRun, setInjected, setPreviousURL, setTimeElapsed,
-    setTimerStarted,
+    getKey, incrementCount, incrementDownTime, incrementTimeElapsed,
+    INSTAGRAM,
+    setKey,
     TIKTOK,
     YOUTUBE
 } from "./data.js";
-
-// Cache Stored
-/*let countdown = 60;
-let timeElapsed = 0; //
-let down_time = 0; //
-let count = 0
-let time_limit = 20;
-let count_limit = 5;
-let prev_url = '';
-let timerStarted = false;*/
-
 // Non-Cache
 let intervalId;
-let injected = false;
-let initial_run = true;
-let count_injected = false;
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'getCountdown') {
+        (async () => {
+            const site = determineSite(sender.tab.url);
+            const countdown = await getKey(site, 'countdown');
+            sendResponse({ countdown: countdown });
+        })();
+        return true; // Indicates that the response is sent asynchronously
+    }
+});
 
-//////////////////////////////
-// Listeners                //
-//////////////////////////////
+function determineSite(url) {
+    if (url.includes('tiktok.com/foryou') || (url.includes('tiktok.com/@') && url.includes('/video/'))) {
+        return TIKTOK;
+    } else if (url.includes('youtube.com/shorts')) {
+        return YOUTUBE;
+    } else if (url.includes('instagram.com/reels')) {
+        return INSTAGRAM;
+    } else {
+        return null;
+    }
+}
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url) {
-        let site = 0
-        if (tab.url.includes('tiktok.com/foryou') || (tab.url.includes('tiktok.com/@') && tab.url.includes('/video/'))) {
-            site = TIKTOK;
-        } else if (tab.url.includes('youtube.com/shorts')) {
-            site = YOUTUBE;
-        } else if (tab.url.includes('instagram.com/reels')) {
-            site = INSTAGRAM;
-        } else {
+        let site = determineSite(tab.url);
+        if (site === null) {
             return;
         }
         console.log('test');
 
-        if (await setInitialRun(site, true)) {
-            await setPreviousURL(site, tab.url);
-            await setInitialRun(site, false)
+        if (await getKey(site, 'initialRun') === true) {
+            await setKey(site, 'previousUrl', tab.url);
+            await setKey(site, 'initialRun', false)
         }
 
-        if (await getPreviousURL(site) !== tab.url) {
+        if (await getKey(site, 'previousUrl') !== tab.url) {
             await incrementCount(site)
-            console.log('Contains', await getCount(site));
+            console.log('Contains', await getKey(site, 'count'));
         }
 
-        if (!(await getTimerStarted(site))) {
-            setTimerStarted(site, true)
+        if (!(await getKey(site, 'timerStarted'))) {
+            setKey(site, 'timerStarted', true)
             intervalId = setInterval(async () => {
-                console.log(getCountInjected(site))
-                if (await getInjected(site) === false && await getCountInjected(site) === false) {
+                if (await getKey(site, 'injected') === false && await getKey(site, 'countInjected') === false) {
                     await incrementTimeElapsed(site)
-                    const timeElapsed = await getTimeElapsed(site)
+                    const timeElapsed = await getKey(site, 'timeElapsed');
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                     // inject after 20 secs
-                    if (timeElapsed >= await getTimeLimit(site)) {
+                    if (timeElapsed >= await getKey(site, 'timeLimit')) {
                         chrome.scripting.executeScript({
                             target: {tabId: tabId},
                             files: ['scripts/pause.js']
-                        }).then(async() => {
-                            await console.log('Content script injected after time limit reached.');
-                            await setInjected(site, true)
-                            await setCountInjected(site,true)
-                            await setDownTime(site, 0);
-                            await setCountdown(site, 10);
-                            await setTimeElapsed(site, 0);
-                        }).catch(async(error) => {
+                        }).then(async () => {
+                            console.log('Content script injected after time limit reached.');
+                            await setKey(site, 'injected', true);
+                            await setKey(site, 'countInjected', true);
+                            await setKey(site, 'downTime', 0);
+                            await setKey(site, 'countdown', 10);
+                            await setKey(site, 'timeElapsed', 0);
+                        }).catch(async (error) => {
                             console.error('Error injecting content script:', error);
-                            await clearInterval(intervalId);
-                            await setTimerStarted(false);
-                            await setTimeElapsed(site, 0);
+                            clearInterval(intervalId);
+                            setKey(site, 'timerStarted', false);
+                            setKey(site, 'timeElapsed', 0);
                         });
                     }
                 } else {
                     await incrementDownTime(site);
                     await decrementCountdown(site);
-                    console.log(`Time down: ${await getDownTime(site)} seconds`);
-                    console.log(`Countdown: ${await getCountdown(site)} seconds`);
+                    console.log(`Time down: ${await getKey(site, 'downTime')} seconds`);
+                    console.log(`Countdown: ${await getKey(site, 'countdown')} seconds`);
 
                     // Unpause after countdown reaches zero
-                    if (await getCountdown(site) <= 0) {
+                    if (await getKey(site, 'countdown') <= 0) {
                         chrome.scripting.executeScript({
                             target: { tabId: tabId },
                             files: ['scripts/unpause.js']
-                        }).then(async() => {
+                        }).then(async () => {
                             console.log('Content script injected to unpause.');
-                            await setCountInjected(site, false); // Allow future count-based injections
-                            await setInjected(site, false); // Allow future time-based injections
-                            await setDownTime(site, 0); // Reset downtime
-                            await setCurrentlyPaused(site, true);
-                            await setTimeElapsed(site, 0);
-                        }).catch(async(error) => {
+                            await setKey(site, 'countInjected', false); // Allow future count-based injections
+                            await setKey(site, 'injected', false); // Allow future time-based injections
+                            await setKey(site, 'downTime', 0); // Reset downtime
+                            await setKey(site, 'currentlyPaused', true);
+                            await setKey(site, 'timeElapsed', 0);
+                        }).catch(async (error) => {
                             console.error('Error injecting unpause content script:', error);
-                            await clearInterval(intervalId);
-                            await setTimerStarted(site, false);
-                            await setTimeElapsed(site, 0);
+                            clearInterval(intervalId);
+                            await setKey(site, 'timeStarted', false);
+                            await setKey(site, 'timeElapsed', 0);
                         });
                     }
                 }
-            }, 1000); //1 second interval
+            }, 1000); // 1 second interval
         }
 
-
         //    count should be double of the actual limit
-        if (await getCount(site) === await getCountLimit(site)) {
-            await setCount(site, 0)
+        if (await getKey(site, 'count') === await getKey(site, 'countLimit')) {
+            await setKey(site, 'count', 0)
             chrome.scripting.executeScript({
                 target: {tabId: tabId},
                 files: ['scripts/pause.js']
-            }).then(async() => {
-                await console.log('Content script injected after count limit reached');
-                await setInjected(site, false); // Allow future time-based injections
-                await setDownTime(site, 0); // Reset downtime
-                await setCurrentlyPaused(site, true);
-                await setTimeElapsed(site, 0)
-            }).catch(async(error) => {
+            }).then(async () => {
+                console.log('Content script injected after count limit reached');
+                await setKey(site, 'injected', true);
+                await setKey(site, 'downtime', 0);
+                await setKey(site, 'currentlyPaused', true);
+                await setKey(site, 'timeElapsed', 0);
+            }).catch(async (error) => {
                 console.error('Error injecting content script:', error);
-                await clearInterval(intervalId);
-                await setTimerStarted(site, false);
-                await setTimeElapsed(site, 0);
+                clearInterval(intervalId);
+                await setKey(site, 'timeStarted', false);
+                await setKey(site, 'timeElapsed', 0);
             });
         }
 
-        await setPreviousURL(site, tab.url);
+        await setKey(site, 'previousUrl', tab.url);
     }
 });
 
@@ -146,11 +137,6 @@ chrome.runtime.onInstalled.addListener((details) => {
             url: "../pages/welcome.html"
         });
     } else if (details.reason === "update") {
-        /* Disable until testing is done
-        chrome.tabs.create({
-            active:true
-        })
-        */
         let json = {
             count: 0,
             previousUrl: '',
@@ -165,10 +151,10 @@ chrome.runtime.onInstalled.addListener((details) => {
             countdown: 15,
             countInjected: false,
             currentlyPaused: false
-        }
+        };
 
-        chrome.storage.local.set({youtube: json});
-        chrome.storage.local.set({instagram: json});
-        chrome.storage.local.set({tiktok: json});
+        chrome.storage.local.set({ youtube: json });
+        chrome.storage.local.set({ instagram: json });
+        chrome.storage.local.set({ tiktok: json });
     }
 });
