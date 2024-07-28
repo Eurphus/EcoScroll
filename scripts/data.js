@@ -72,7 +72,7 @@ export function getDate(addition) {
 export function getDuration(futureDate) {
     let date = Number(new Date());
 
-    let duration = futureDate - date
+    let duration= Math.abs(futureDate - date)
     duration /= 1000;
     duration = Math.round(duration);
     return duration
@@ -146,38 +146,3 @@ export async function incrementCount(site) {
     await updateGlobalCount();
 }
 
-/**
- * Increments the timeElapsed key. Useful for time tracking.
- *
- * @param site
- * @returns {Promise<void>}
- */
-export async function incrementTimeElapsed(site) {
-    let time = await getKey(site, 'timeElapsed');
-    time += 1;
-    await setKey(site, 'timeElapsed', time);
-}
-
-/**
- * Increments the downtime key. Useful for time tracking.
- *
- * @param site
- * @returns {Promise<void>}
- */
-export async function incrementDownTime(site) {
-    let time = await getKey(site, 'downTime');
-    time += 1;
-    await setKey(site, 'downTime', time);
-}
-
-/**
- * Decrements the countdown key.
- *
- * @param site
- * @returns {Promise<void>}
- */
-export async function decrementCountdown(site) {
-    let time = await getKey(site, 'countdown');
-    time -= 1;
-    await setKey(site, 'countdown', time);
-}

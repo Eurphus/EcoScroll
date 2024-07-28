@@ -3,6 +3,8 @@
 <head>
     <link rel="stylesheet" href="../styles.css">
     <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    <script src="../scripts/datalink.js" type="module"></script>
+    <script src="../scripts/data.js" type="module"></script>
     <meta charset="UTF-8"/>
     <title>EcoScroll</title>
 </head>
@@ -32,23 +34,23 @@
         <div id="panel-main">
             <div class="panel" id="panel-1">
                 <p class="top-left-brand">Instagram Reels</p>
-                <p class="bottom-right-count">10 Videos Watched</p>
+                <p class="bottom-right-count" id="instagram-result">10 Videos Watched</p>
             </div>
 
             <div class="panel" id="panel-2">
                 <p class="top-left-brand">YouTube Shorts</p>
-                <p class="bottom-right-count">16 Videos Watched</p>
+                <p class="bottom-right-count" id="youtube-result">16 Videos Watched</p>
             </div>
 
             <div class="panel" id="panel-3">
                 <p class="top-left-brand">TikTok</p>
-                <p class="bottom-right-count">8 Videos Watched</p>
+                <p class="bottom-right-count" id="tiktok-result">8 Videos Watched</p>
             </div>
 
             <div class="bottom-panel-group">
                 <div class="panel-medium">
-                    <p class="panel-text">2 Minutes Left</p>
-                    <p class="panel-text">5 Scrolls Left</p>
+                    <p class="panel-text" id="minutes-left">0 Minutes Left</p>
+                    <p class="panel-text" id="scrolls-left">0 Scrolls Left</p>
                 </div>
 
                 <div class="stacked-panels">

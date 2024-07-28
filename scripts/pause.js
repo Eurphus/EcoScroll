@@ -66,34 +66,25 @@ function showPopup(video) {
 
     // Fetch the countdown value from the background script
     chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
-        let countdown = response.countdown;
+        let countdown = response.countdown; // Default to 10 seconds if not set
 
-        message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
+        if (message.innerText !== `Take a deep breath and relax. Resuming in ${countdown} seconds.`) {
+            message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
+        }
 
         // Update the countdown every second
         let countdownInterval = setInterval( () => {
-            chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
-                countdown = response.countdown
+            chrome.runtime.sendMessage({ action: 'getCountdown '}, (countdown) => {
                 if (countdown >= 0) {
-                    message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
+                    if (message.innerText !== `Take a deep breath and relax. Resuming in ${countdown} seconds.`) {
+                        message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
+                    }
                 } else {
                     unpauseVideo(video, popup);
                     clearInterval(countdownInterval);
                 }
             })
         }, 1000);
-        /*
-        let countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
-            } else {
-                clearInterval(countdownInterval);
-                // Unpause the video
-                unpauseVideo(video, popup);
-            }
-        }, 1000);*/
-
     });
 }
 

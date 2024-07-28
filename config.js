@@ -15,7 +15,9 @@ export const default_json = {
     // Persistent Settings
     timeLimit: 5,
     countLimit: 5,
-    countdownMax: 15,
+    countdownMax: 5,
+    timeSelected: true,
+    countSelected: true,
     // Stats
     shortsWatched: 0
 }
@@ -23,6 +25,4 @@ export const default_json = {
 // default_json with only the persistant settings and stats
 export const default_global_json = {
     shortsWatched: 0,
-    timeSelected: true,
-    countSelected: true
 }
