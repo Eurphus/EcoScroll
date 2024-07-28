@@ -186,23 +186,24 @@ body {
 
 #panel-secondary {
     background:#004d5e;
-    min-height:80%;
+    min-height:90%;
     border-radius:6px;
     margin-top:15px;
-    position:absolute;
     width: 100%;
+    padding-top:2px;
 }
 
 .settings-panel {
     background:#2d7e90;
     width:90%;
-    margin-top: 15px;
+    margin-top:15px;
     margin-left:auto;
     margin-right:auto;
     border-radius:6px;
     height:55px;
     line-height:55px;
     box-sizing: border-box;
+    text-align:center;
 }
 #long-setting-text {
     line-height:28px;
@@ -228,22 +229,34 @@ body {
 #pop-up-duration {
     float: right;
     width: 70px;
-    margin-top: 10px;
+    margin-top: 19px;
     margin-right: 25px;
 }
 
 #time-limit {
     float: right;
     width: 70px;
-    margin-top: 10px;
+    margin-top: 19px;
     margin-right: 25px;
 }
 
 #quantity-limit {
     float: right;
     width: 70px;
-    margin-top: 10px;
+    margin-top: 19px;
     margin-right: 25px;
+}
+
+#submission-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top:20px;
+
+}
+#submit-button {
+    float:center;
+    
 }
 
 
