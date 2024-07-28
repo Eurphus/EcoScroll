@@ -29,68 +29,9 @@ export async function getSiteJSON(site) {
     return result;
 }
 
-////////////////////////////////
-// Data Retrieval Functions   //
-////////////////////////////////
-
-export async function getCount(site) {
-    const result = await getSiteJSON(site)
-    return result.count;
-}
-
-export async function getPreviousURL(site) {
-    const result = await getSiteJSON(site)
-    return result.previousUrl;
-}
-
-export async function getTimerStarted(site) {
-    const result = await getSiteJSON(site)
-    return result.timerStarted;
-}
-
-export async function getTimeElapsed(site) {
-    const result = await getSiteJSON(site)
-    return result.timeElapsed;
-}
-
-export async function getDownTime(site) {
-    const result = await getSiteJSON(site)
-    return result.downTime;
-}
-
-export async function getTimeLimit(site) {
-    const result = await getSiteJSON(site)
-    return result.timeLimit;
-}
-
-export async function getCountLimit(site) {
-    const result = await getSiteJSON(site)
-    return result.countLimit;
-}
-
-export async function getInjected(site) {
-    const result = await getSiteJSON(site)
-    return result.injected;
-}
-
-export async function getInitialRun(site) {
-    const result = await getSiteJSON(site)
-    return result.initialRun;
-}
-
-export async function getCountdown(site) {
-    const result = await getSiteJSON(site)
-    return result.countdown;
-}
-
-export async function getCountInjected(site) {
-    const result = await getSiteJSON(site)
-    return result.countInjected;
-}
-
-export async function getCurrentlyPaused(site) {
-    const result = await getSiteJSON(site)
-    return result.currentlyPaused;
+export async function getKey(site, key) {
+    const result = await getSiteJSON(site);
+    return result[key];
 }
 
 //////////////////////////////
@@ -111,26 +52,32 @@ export async function applySetting(site, json) {
     }
 }
 
+export async function setKey(site, key, input) {
+    const result = await getSiteJSON(site);
+    result[key] = input;
+    applySetting(site, result);
+}
+
 export async function incrementCount(site) {
-    let count = await getCount(site);
+    let count = await getKey(site, 'count');
     count += 1;
     setCount(site, count);
 }
 
 export async function incrementTimeElapsed(site) {
-    let time = await getTimeElapsed(site);
+    let time = await getKey(site, 'timeElapsed');
     time += 1;
     setTimeElapsed(site, time);
 }
 
 export async function incrementDownTime(site) {
-    let time = await getDownTime(site);
+    let time = await getKey(site, 'downTime');
     time += 1;
     setDownTime(site, time);
 }
 
 export async function decrementCountdown(site) {
-    let time = await getCountdown(site);
+    let time = await getKey(site, 'countdown');
     time -= 1;
     setCountdown(site, time);
 }
