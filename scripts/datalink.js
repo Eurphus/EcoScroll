@@ -14,7 +14,7 @@ window.onload = setInterval(async function () {
 
     var currentScrolls = await getKey(GLOBAL, 'count');
     var maxScrolls = await getKey(GLOBAL, "quantity-limit");
-    document.getElementById("scrolls-left").textContent = (maxScrolls - currentScrolls) + " Scrolls Left";
+    document.getElementById("scrolls-left").textContent = toString(maxScrolls - currentScrolls) + " Scrolls Left";
 
     // var currentTime = await getKey(GLOBAL, '')
 }, 200);
