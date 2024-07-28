@@ -29,8 +29,9 @@ function enforcePause(video) {
         showPopup(video);
     } /*else if (window.pausedVideos.has(video)) {
         console.log('Video alr);
-    } */ else {
+    } */ else {/*
         console.error('No video element found.');
+        */
     }
 }
 
