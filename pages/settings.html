@@ -24,26 +24,58 @@
                 
             <div id="panel-secondary">
 
-                <div class="settings-panel" id="settings-panel-1">
-                    <p class = "settings-option">Time Before Pop-up (seconds)</p>
-                    <input type="number" id="time-before-pop" name="time-before-pop" min="1">
+                <div class="settings-panel">
+                    <div class="setting-checkbox">
+                        <input type="checkbox" id="control-by-time" name="control-by-time" value="control-by-time">
+                    </div>
+                    <div class="setting-text">
+                        <p>Control By Time</p>
+                    </div>
+                    
                 </div>
 
-
-                <div class="settings-panel" id="settings-panel-2">
-                    <p class = "settings-option">Videos Before Pop-up</p>
-                    <input type="number" id="videos-before-pop" name="videos-before-pop" min="1">
+                <div class="settings-panel">
+                    <div class="setting-checkbox">
+                        <input type="checkbox" id="control-by-quantity" name="control-by-quantity" value="control-by-quantity">
+                    </div>
+                    <div class="setting-text">
+                        <p>Control By Quantity</p>
+                    </div>
                 </div>
 
-                <div class="settings-panel" id="settings-panel-3">
-                    <p class = "settings-option">Pop-up Duration (seconds)</p>
-                    <input type="number" id="pop-duration" name="pop-duration" min="1">
+                <div class="settings-panel">
+                    <div class="settings-form">
+                        <input type="text" id="pop-up-duration" name="pop-up-duration" value="pop-up-duration">
+                    </div>
+
+                    <div class="setting-text" id="long-setting-text">
+                        <p>Pop-Up Duration (seconds)</p>
+                    </div>
+                    
+
                 </div>
 
+                <div class="settings-panel">
+                    <div class="settings-form">
+                        <input type="text" id="time-limit" name="time-limit" value="time-limit">
+                    </div>
+                    <div class="setting-text">
+                        <p>Time Limit (seconds)</p>
+                    </div>
+                </div>
+
+                <div class="settings-panel">
+                    <div class="settings-form">
+                        <input type="text" id="quantity-limit" name="quantity-limit" value="quantity-limit">
+                    </div>
+                    <div class="setting-text">
+                        <p>Quantity Limit</p>
+                    </div>
+                </div>
             </div>
 
         </div>
-    </div>
+    </div> <!--End of container-->
 </body>
 
 
