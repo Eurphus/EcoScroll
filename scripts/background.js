@@ -52,7 +52,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
 
         // If the last URL is different, increment the count
-        if (await getKey(site, 'previousUrl') !== tab.url) {
+        // Requirement to avoid
+        if (await getKey(site, 'previousUrl') !== tab.url
+            && !((tab.url.includes('tiktok.com/@') && (tab.url.includes('/video/'))))) {
             await incrementCount(site)
             await setKey(site, 'previousUrl', tab.url);
         }
