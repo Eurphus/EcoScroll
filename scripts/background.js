@@ -64,7 +64,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                     // inject after 20 secs
-                    if (timeSelected === true){
+                    if (await getKey(site, 'timeSelected') === true){
                         if (timeElapsed >= await getKey(site, 'timeLimit')) {
                             chrome.scripting.executeScript({
                                 target: {tabId: tabId},
@@ -113,7 +113,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
 
         //    count should be double of the actual limit
-        if (countSelected === true){
+        if (await getKey(site, 'countSelected') === true){
             if (await getKey(site, 'count') === await getKey(site, 'countLimit')) {
                 await setKey(site, 'count', 0)
                 chrome.scripting.executeScript({
