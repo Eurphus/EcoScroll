@@ -65,12 +65,24 @@ function showPopup(video) {
     document.body.appendChild(popup);
 
     // Fetch the countdown value from the background script
-    chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
-        let countdown = response.countdown || 10; // Default to 10 seconds if not set
+    chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
+        let countdown = response.countdown;
 
         message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
 
         // Update the countdown every second
+        let countdownInterval = setInterval( () => {
+            chrome.runtime.sendMessage({ action: 'getCountdown' }, (response) => {
+                countdown = response.countdown
+                if (countdown >= 0) {
+                    message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
+                } else {
+                    unpauseVideo(video, popup);
+                    clearInterval(countdownInterval);
+                }
+            })
+        }, 1000);
+        /*
         let countdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
@@ -80,7 +92,8 @@ function showPopup(video) {
                 // Unpause the video
                 unpauseVideo(video, popup);
             }
-        }, 1000);
+        }, 1000);*/
+
     });
 }
 

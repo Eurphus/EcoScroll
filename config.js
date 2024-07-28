@@ -11,10 +11,11 @@ export const default_json = {
     initialRun: true,
     countInjected: false,
     currentlyPaused: false,
+    countdown: 0,
     // Persistent Settings
-    timeLimit: 15,
+    timeLimit: 5,
     countLimit: 5,
-    countdown: 15,
+    countdownMax: 15,
     // Stats
     shortsWatched: 0
 }

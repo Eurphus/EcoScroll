@@ -2,12 +2,11 @@ import {
     YOUTUBE,
     INSTAGRAM,
     TIKTOK,
-    decrementCountdown,
     getKey,
     setKey,
     incrementCount,
     incrementDownTime,
-    incrementTimeElapsed,
+    incrementTimeElapsed, getDate, getDuration,
 } from "./data.js";
 
 import {default_global_json, default_json} from "../config.js";
@@ -28,7 +27,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'getCountdown') {
         (async () => {
             const site = determineSite(sender.tab.url);
-            const countdown = await getKey(site, 'countdown');
+            let countdown = getDuration(await getKey(site, 'countdown'));
+
+            // Corrects errors with poor predication and overflow due to late updating
+            if (countdown < 0 || countdown > await getKey(site, 'countdownMax')) {
+                countdown = 0;
+            }
             sendResponse({ countdown: countdown });
         })();
         return true; // Indicates that the response is sent asynchronously
@@ -46,20 +50,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         if (site === null) {
             return;
         }
-        console.log('test');
 
-        if (await getKey(site, 'initialRun') === true) {
-            await setKey(site, 'previousUrl', tab.url);
-            await setKey(site, 'initialRun', false)
-        }
-
+        // If the last URL is different, increment the count
         if (await getKey(site, 'previousUrl') !== tab.url) {
             await incrementCount(site)
-            console.log('Contains', await getKey(site, 'count'));
+            await setKey(site, 'previousUrl', tab.url);
         }
 
         if (!(await getKey(site, 'timerStarted'))) {
-            setKey(site, 'timerStarted', true)
+            await setKey(site, 'timerStarted', true)
             intervalId = setInterval(async () => {
                 if (await getKey(site, 'injected') === false && await getKey(site, 'countInjected') === false) {
                     await incrementTimeElapsed(site)
@@ -67,7 +66,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                     // inject after 20 secs
-                    if (timeElapsed >= await getKey(site, 'timeLimit')) {
+                    if (await getKey(site, 'timeSelected') === true
+                        && timeElapsed >= await getKey(site, 'timeLimit')) {
+                        await setKey(site, 'countdown', getDate(await getKey(site, 'countdownMax'))); // Current date plus the max seconds
                         chrome.scripting.executeScript({
                             target: {tabId: tabId},
                             files: ['scripts/pause.js']
@@ -76,7 +77,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             await setKey(site, 'injected', true);
                             await setKey(site, 'countInjected', true);
                             await setKey(site, 'downTime', 0);
-                            await setKey(site, 'countdown', 10);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
                             console.error('Error injecting content script:', error);
@@ -87,12 +87,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     }
                 } else {
                     await incrementDownTime(site);
-                    await decrementCountdown(site);
                     console.log(`Time down: ${await getKey(site, 'downTime')} seconds`);
-                    console.log(`Countdown: ${await getKey(site, 'countdown')} seconds`);
+                    console.log(`Countdown: ${getDuration(await getKey(site, 'countdown'))} seconds`);
 
-                    // Unpause after countdown reaches zero
-                    if (await getKey(site, 'countdown') <= 0) {
+                    // Unpause after countdown futureDate <= current date
+                    if (await getKey(site, 'countdown') <= Number(new Date())) {
                         chrome.scripting.executeScript({
                             target: { tabId: tabId },
                             files: ['scripts/unpause.js']
@@ -115,7 +114,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
 
         //    count should be double of the actual limit
-        if (await getKey(site, 'count') === await getKey(site, 'countLimit')) {
+        if (await getKey(site, 'countSelected') === true
+            && await getKey(site, 'count') === await getKey(site, 'countLimit')) {
             await setKey(site, 'count', 0)
             chrome.scripting.executeScript({
                 target: {tabId: tabId},
