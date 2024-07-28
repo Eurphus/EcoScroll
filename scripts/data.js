@@ -51,11 +51,6 @@ export async function getTimerStarted(site) {
     return result.timerStarted;
 }
 
-export async function getIntervalId(site) {
-    const result = await getSiteJSON(site)
-    return result.intervalId;
-}
-
 export async function getTimeElapsed(site) {
     const result = await getSiteJSON(site)
     return result.timeElapsed;
@@ -114,6 +109,24 @@ export async function applySetting(site, json) {
     }
 }
 
+export async function incrementCount(site) {
+    let count = await getCount(site);
+    count += 1;
+    setCount(site, count);
+}
+
+export async function incrementTimeElapsed(site) {
+    let time = await getTimeElapsed(site);
+    time += 1;
+    setTimeElapsed(site, time);
+}
+
+export async function incrementDownTime(site) {
+    let time = await getDownTime(site);
+    time += 1;
+    setDownTime(site, time);
+}
+
 export async function setCount(site, input) {
     const result = await getSiteJSON(site);
     result.count = input;
@@ -129,12 +142,6 @@ export async function setPreviousURL(site, input) {
 export async function setTimerStarted(site, input) {
     const result = await getSiteJSON(site);
     result.timerStarted = input;
-    applySetting(site, result);
-}
-
-export async function setIntervalId(site, input) {
-    const result = await getSiteJSON(site);
-    result.intervalId = input;
     applySetting(site, result);
 }
 
@@ -184,16 +191,4 @@ export async function setCountInjected(site, input) {
     const result = await getSiteJSON(site);
     result.countInjected = input;
     applySetting(site, result);
-}
-
-
-function incrementCount(site) {
-    switch (site) {
-        case YOUTUBE:
-            break;
-        case INSTAGRAM:
-            break;
-        case TIKTOK:
-            break;
-    }
 }
