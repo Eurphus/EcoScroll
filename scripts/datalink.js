@@ -12,6 +12,27 @@ window.onload = setInterval(async function () {
     let tiktokCount = await getKey(TIKTOK, 'shortsWatched');
     document.getElementById("tiktok-result").textContent = tiktokCount + " Videos Watched";
 
-    // var currentScrolls = await getKey(GLOBAL, 'count');
-    // document.getElementById("scrolls-left").textContent = 
+    var currentScrolls = await getKey(GLOBAL, 'count');
+    var maxScrolls = await getKey(GLOBAL, "quantity-limit");
+    document.getElementById("scrolls-left").textContent = (maxScrolls - currentScrolls) + " Scrolls Left";
+
+    // var currentTime = await getKey(GLOBAL, '')
 }, 200);
+
+
+// functions for setting values
+
+async function setAllValues() {
+    if (document.getElementById("control-by-time").checked == true) {
+        var timeLimit = document.getElementById("time-limit").value;
+        await mod.setKey(mod.GLOBAL, "time-limit", timeLimit);
+    }
+
+    if (document.getElementById("control-by-quantity").checked == true) {
+        var scrollLimit = document.getElementById("quantity-limit").value;
+        await mod.setKey(mod.GLOBAL, "quantity-limit", scrollLimit);
+    }
+
+    var breakTime = document.getElementById("pop-up-duration");
+    await mod.setKey(mod.GLOBAL, "break-time", breakTime);
+}

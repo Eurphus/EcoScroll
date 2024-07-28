@@ -222,7 +222,7 @@ body {
 .setting-text {
     padding-left:10px;
     font-size:12px;
-    width:50%;
+    width:70%;
 
 }
 
@@ -234,7 +234,6 @@ body {
     padding-bottom:15px;
 
 }
-
 
 #pop-up-duration {
     float: right;
