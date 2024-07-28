@@ -38,21 +38,3 @@ window.onload = setInterval(async function () {
         document.getElementById("scrolls-left").textContent = "Disabled";
     }
 }, 200);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Configure Settings                                                                                             //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function setAllValues() {
-    if (document.getElementById("control-by-time").checked === true) {
-        let timeLimit = document.getElementById("time-limit").value;
-        await setKey(YOUTUBE, "time-limit", timeLimit);
-    }
-
-    if (document.getElementById("control-by-quantity").checked === true) {
-        let scrollLimit = document.getElementById("quantity-limit").value;
-        await setKey(YOUTUBE, "quantity-limit", scrollLimit);
-    }
-
-    let breakTime = document.getElementById("pop-up-duration");
-    await setKey(YOUTUBE, "break-time", breakTime);
-}
