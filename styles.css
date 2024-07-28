@@ -6,14 +6,13 @@ body {
 }
 
 #container {
-    border:1px solid white;
     width: 100%;
     height: 100%;
 }
 
 #header {
     width:300px;
-    height:90px;
+    height:80px;
     box-shadow:0px 4px 5px black;
     position:absolute;
     top:0;
@@ -28,5 +27,49 @@ body {
     line-height: normal;
     padding-left: 35px;
     box-sizing: border-box;
-    position:relative;
+    position: relative;
+}
+
+#panel-main {
+    width: 280px;
+    height: 400px;
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    right: 10px;
+}
+
+.panel {
+    width: 255px;
+    height: 100px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#accent {
+    width: 50px;
+    height: 40px;
+    border-radius: 6px;
+    background: #002a3d;
+    box-shadow: 3px 3px 0px #003646;
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+#panel-1 {
+    background: #004d5e;
+    box-shadow: 5px 5px 15px black, 5px 5px 0px #006577;
+}
+
+#panel-2 {
+    background: #2d7e90;
+    box-shadow: 5px 5px 15px black, 5px 5px 0px #4b98ab;
+}
+
+#panel-3 {
+    background: #68b3c6;
+    box-shadow: 5px 5px 20px black, 5px 5px 0px #84cfe2;
 }
