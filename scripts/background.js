@@ -59,7 +59,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             await setKey(site, 'previousUrl', tab.url);
         }
 
-        if (!(await getKey(site, 'timerStarted'))) {
+        if (await getKey(site, 'countSelected') === true
+                && await getKey(site, 'count') === await getKey(site, 'countLimit')) {
+            await setKey(site, 'count', 0)
+            await pause(site, tabId);
+        } else if (!(await getKey(site, 'timerStarted'))) {
             await setKey(site, 'timerStarted', true)
             intervalId = setInterval(async () => {
                 if (await getKey(site, 'injected') === false && await getKey(site, 'countInjected') === false) {
@@ -71,30 +75,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     }
                     timeElapsed = getDuration(timeElapsed);
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
+                    await setKey(site, 'timeUsed', timeElapsed);
 
                     // inject after 20 secs
                     if (await getKey(site, 'timeSelected') === true
                         && timeElapsed >= await getKey(site, 'timeLimit')) {
-                        await setKey(site, 'countdown', getDate(await getKey(site, 'countdownMax'))); // Current date plus the max seconds
-                        chrome.scripting.executeScript({
-                            target: { tabId: tabId },
-                            files: ['scripts/pause.js']
-                        }).then(async () => {
-                            console.log('Content script injected after time limit reached.');
-                            //await setKey(site, 'countdown', 0)
-                            await setKey(site, 'injected', true);
-                            await setKey(site, 'countInjected', true);
-                            //await setKey(site, 'downTime', 0);
-                            await setKey(site, 'timeElapsed', 0);
-                        }).catch(async (error) => {
-                            console.error('Error injecting content script:', error);
-                            clearInterval(intervalId);
-                            await setKey(site, 'timerStarted', false);
-                            await setKey(site, 'timeElapsed', 0);
-                        });
+                        await pause(site, tabId);
                     }
                 } else {
-
                     //console.log(`Time down: ${await getKey(site, 'downTime')} seconds`);
                     console.log(`Countdown: ${getDuration(await getKey(site, 'countdown'))} seconds`);
 
@@ -118,27 +106,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     }
                 }
             }, 1000); // 1 second interval
-        }
-
-        //    count should be double of the actual limit
-        if (await getKey(site, 'countSelected') === true
-            && await getKey(site, 'count') === await getKey(site, 'countLimit')) {
-            await setKey(site, 'count', 0)
-            chrome.scripting.executeScript({
-                target: {tabId: tabId},
-                files: ['scripts/pause.js']
-            }).then(async () => {
-                console.log('Content script injected after count limit reached');
-                await setKey(site, 'injected', true);
-                //await setKey(site, 'downtime', 0);
-                await setKey(site, 'currentlyPaused', true);
-                await setKey(site, 'timeElapsed', 0);
-            }).catch(async (error) => {
-                console.error('Error injecting content script:', error);
-                clearInterval(intervalId);
-                await setKey(site, 'timeStarted', false);
-                await setKey(site, 'timeElapsed', 0);
-            });
         }
 
         await setKey(site, 'previousUrl', tab.url);
@@ -166,6 +133,24 @@ chrome.runtime.onInstalled.addListener((details) => {
 // Helper Functions                                                                                                   //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+async function pause(site, tabId) {
+    await setKey(site, 'countdown', getDate(await getKey(site, 'countdownMax'))); // Current date plus the max seconds
+    chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ['scripts/pause.js']
+    }).then(async () => {
+        console.log('Content script injected after time limit reached.');
+        await setKey(site, 'injected', true);
+        await setKey(site, 'countInjected', true);
+        await setKey(site, 'timeElapsed', 0);
+    }).catch(async (error) => {
+        console.error('Error injecting content script:', error);
+        clearInterval(intervalId);
+        await setKey(site, 'timerStarted', false);
+        await setKey(site, 'timeElapsed', 0);
+    });
+}
 /**
  * Detects if it is a eligible website, assigns id.
  *

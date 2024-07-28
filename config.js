@@ -5,7 +5,6 @@ export const default_json = {
     previousUrl: '',
     timerStarted: false,
     timeElapsed: 0,
-    downTime: 0,
     injected: false,
     initialRun: true,
     countInjected: false,
@@ -13,6 +12,7 @@ export const default_json = {
     countdown: 0,
     // Persistent Settings
     timeLimit: 10,
+    timeUsed: 0,
     countLimit: 5,
     countdownMax: 10,
     timeSelected: true,
