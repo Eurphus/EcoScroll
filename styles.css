@@ -1,8 +1,13 @@
 body {
     width:300px;
-    height:500px;
+    height:550px;
     background:#1c1c1c;
-    margin:0
+    margin: 0;
+    color: #D9D9D9;
+    font-family: 'Inter';
+    font-weight: 400;
+    line-height: normal;
+    font-style: normal;
 }
 
 #container {
@@ -19,57 +24,136 @@ body {
 }
 
 #title {
-    color: #D9D9D9;
-    font-family: 'Inter';
     font-size: 32px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    padding-left: 35px;
+    padding-left: 85px;
     box-sizing: border-box;
     position: relative;
 }
 
 #panel-main {
     width: 280px;
-    height: 400px;
+    height: 450px;
     position: absolute;
-    top: 100px;
+    top: 85px;
     left: 10px;
     right: 10px;
 }
 
 .panel {
     width: 255px;
-    height: 100px;
+    height: 80px;
     border-radius: 6px;
     margin-bottom: 20px;
     margin-left: 10px;
     margin-right: 10px;
 }
 
+.stacked-panels {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.panel-medium {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    background: #3b9993;
+    box-shadow: 5px 5px 15px black, 5px 5px 0px #276972;
+    border-radius: 6px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    vertical-align: top;
+}
+
+.panel-small {
+    width: 120px;
+    height: 50px;
+    background: #3ea284;
+    box-shadow: 5px 5px 15px black, 5px 5px 0px #277260;
+    border-radius: 6px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    vertical-align: top;
+}
+
 #accent {
-    width: 50px;
-    height: 40px;
+    width: 40px;
+    height: 33px;
     border-radius: 6px;
     background: #002a3d;
-    box-shadow: 3px 3px 0px #003646;
+    box-shadow: 4px 4px 0px #003646, 7px 7px 0px #277260, 9px 9px 0px #64ffbe;
     position: absolute;
     top: 20px;
-    right: 30px;
+    left: 20px;
 }
 
 #panel-1 {
+    background: #002a3d;
+    box-shadow: 5px 5px 15px black, 5px 5px 0px #003646;
+}
+
+#panel-2 {
     background: #004d5e;
     box-shadow: 5px 5px 15px black, 5px 5px 0px #006577;
 }
 
-#panel-2 {
+#panel-3 {
     background: #2d7e90;
-    box-shadow: 5px 5px 15px black, 5px 5px 0px #4b98ab;
+    box-shadow: 5px 5px 20px black, 5px 5px 0px #4b98ab;
 }
 
-#panel-3 {
-    background: #68b3c6;
-    box-shadow: 5px 5px 20px black, 5px 5px 0px #84cfe2;
+.top-left-brand {
+    padding-top: 15px;
+    padding-left: 20px;
+    font-size: 16px;
+}
+
+.bottom-right-count {
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-align: right;
+    font-size: 14px;
+}
+
+/* Start of settings CSS */
+
+#settings-header-text {
+    text-align:center;
+}
+
+#settings-header {
+    width: auto;
+    height: 50px;
+    line-height:50px;
+    background: #002a3d;
+    border-radius:6px;
+}
+
+#panel-secondary {
+    background:#004d5e;
+    min-height:80%;
+    border-radius:6px;
+    margin-top:15px;
+}
+
+#settings-panel {
+    padding-top: 15px;
+    background: #2d7e90;
+}
+
+.settings-option { 
+    font-size:18px;
+    text-align:center;
+    float:left
+}
+
+.panel-text {
+    font-size: 14px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin: auto;
 }
