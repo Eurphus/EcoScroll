@@ -30,6 +30,49 @@ body {
     position: relative;
 }
 
+#button-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#settings img {
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#readme img {
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.new-button {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background: #a5a5a5;
+    border-radius: 5px;
+    box-shadow: 1px 1px 2px black; 
+    transition-duration: 0.3s;
+    position: relative;
+}
+
+.new-button:hover {
+    background: white;
+    box-shadow: 1px 1px 2px #6d6d6d;
+    transition-duration: 0.3s;
+}
+
 #panel-main {
     width: 280px;
     height: 450px;
@@ -117,6 +160,15 @@ body {
     font-size: 14px;
 }
 
+.panel-text {
+    font-size: 14px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin: auto;
+}
+
 /* Start of settings CSS */
 
 #settings-header-text {
@@ -147,13 +199,4 @@ body {
     font-size:18px;
     text-align:center;
     float:left
-}
-
-.panel-text {
-    font-size: 14px;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-bottom: 15px;
-    margin-top: 0;
-    margin: auto;
 }
