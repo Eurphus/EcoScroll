@@ -47,13 +47,21 @@ function showPopup(video) {
     popup.style.backgroundColor = 'white';
     popup.style.border = '1px solid black';
     popup.style.zIndex = '1000';
-    popup.style.width = '700px';  // Adjust the width as needed
-    popup.style.height = '500px';
+    popup.style.width = '480px';  // Adjust the width as needed
+    popup.style.height = '271px';
+    popup.style.textAlign = 'center';
+    popup.style.backgroundImage = 'url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXNuanJ1c2R5cWttdTlubW5pMGRiZmhlaTl3dTIxN2pqa215bzVwaiZlcD12MV9pbnRlcm5fZ2lmX2J5X2lkJmN0PWc/xUA7b9HAKGRDT3Rfsk/giphy.gif")';
+    popup.style.backgroundSize = 'cover';
+    popup.style.backgroundPosition = 'center';
 
     var message = document.createElement('p');
     message.id = 'countdownMessage';
-    popup.appendChild(message);
+    message.style.color = 'white';
+    message.style.fontSize = '24px';
+    message.style.textAlign = 'center';
+    message.style.marginTop = '240px'; // Adjust to position the text vertically centered
 
+    popup.appendChild(message);
     document.body.appendChild(popup);
 
     // Fetch the countdown value from the background script
