@@ -25,7 +25,7 @@ body {
 
 #title {
     font-size: 32px;
-    padding-left: 35px;
+    padding-left: 85px;
     box-sizing: border-box;
     position: relative;
 }
@@ -50,6 +50,8 @@ body {
 
 .stacked-panels {
     display: inline-block;
+    vertical-align: top;
+    position: relative;
 }
 
 .panel-medium {
@@ -62,6 +64,7 @@ body {
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 20px;
+    vertical-align: top;
 }
 
 .panel-small {
@@ -72,17 +75,18 @@ body {
     border-radius: 6px;
     margin-right: 10px;
     margin-bottom: 20px;
+    vertical-align: top;
 }
 
 #accent {
-    width: 50px;
-    height: 40px;
+    width: 40px;
+    height: 33px;
     border-radius: 6px;
     background: #002a3d;
-    box-shadow: 3px 3px 0px #003646;
+    box-shadow: 4px 4px 0px #003646, 7px 7px 0px #277260, 9px 9px 0px #64ffbe;
     position: absolute;
     top: 20px;
-    right: 30px;
+    left: 20px;
 }
 
 #panel-1 {
@@ -111,4 +115,13 @@ body {
     padding-right: 10px;
     text-align: right;
     font-size: 14px;
+}
+
+.panel-text {
+    font-size: 14px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin: auto;
 }
