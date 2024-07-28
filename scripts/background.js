@@ -5,8 +5,7 @@ import {
     getKey,
     setKey,
     incrementCount,
-    incrementDownTime,
-    incrementTimeElapsed, getDate, getDuration,
+    getDate, getDuration,
 } from "./data.js";
 
 import {default_global_json, default_json} from "../config.js";
@@ -61,8 +60,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             await setKey(site, 'timerStarted', true)
             intervalId = setInterval(async () => {
                 if (await getKey(site, 'injected') === false && await getKey(site, 'countInjected') === false) {
-                    await incrementTimeElapsed(site)
-                    const timeElapsed = await getKey(site, 'timeElapsed');
+                    let timeElapsed = await getKey(site, 'timeElapsed');
+                    if (timeElapsed === 0) {
+                        console.log("Elapse Set");
+                        await setKey(site, 'timeElapsed', Number(new Date()));
+                        timeElapsed = await getKey(site, 'timeElapsed');
+                    }
+                    timeElapsed = getDuration(timeElapsed);
                     console.log(`Time elapsed: ${timeElapsed} seconds`);
 
                     // inject after 20 secs
@@ -76,7 +80,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             console.log('Content script injected after time limit reached.');
                             await setKey(site, 'injected', true);
                             await setKey(site, 'countInjected', true);
-                            await setKey(site, 'downTime', 0);
+                            //await setKey(site, 'downTime', 0);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
                             console.error('Error injecting content script:', error);
@@ -86,8 +90,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                         });
                     }
                 } else {
-                    await incrementDownTime(site);
-                    console.log(`Time down: ${await getKey(site, 'downTime')} seconds`);
+
+                    //console.log(`Time down: ${await getKey(site, 'downTime')} seconds`);
                     console.log(`Countdown: ${getDuration(await getKey(site, 'countdown'))} seconds`);
 
                     // Unpause after countdown futureDate <= current date
@@ -99,7 +103,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             console.log('Content script injected to unpause.');
                             await setKey(site, 'countInjected', false); // Allow future count-based injections
                             await setKey(site, 'injected', false); // Allow future time-based injections
-                            await setKey(site, 'downTime', 0); // Reset downtime
+                            //await setKey(site, 'downTime', 0); // Reset downtime
                             await setKey(site, 'currentlyPaused', true);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
@@ -123,7 +127,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             }).then(async () => {
                 console.log('Content script injected after count limit reached');
                 await setKey(site, 'injected', true);
-                await setKey(site, 'downtime', 0);
+                //await setKey(site, 'downtime', 0);
                 await setKey(site, 'currentlyPaused', true);
                 await setKey(site, 'timeElapsed', 0);
             }).catch(async (error) => {
