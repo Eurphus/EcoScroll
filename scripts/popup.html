@@ -26,25 +26,25 @@
     </style>
 </head>
 <body>
-    <div id="countdownMessage">Video paused. Resuming in <span id="countdown">10</span> seconds.</div>
+<div id="countdownMessage">Video paused. Resuming in <span id="countdown">10</span> seconds.</div>
 
-    <script>
-        // This script handles the countdown in the popup
-        chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
-            var countdown = response.countdown || 10; // Default to 10 seconds if not set
-            var countdownElement = document.getElementById('countdown');
-            countdownElement.innerText = countdown;
+<script>
+    // This script handles the countdown in the popup
+    chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
+        let countdown = response.countdown || 10; // Default to 10 seconds if not set
+        let countdownElement = document.getElementById('countdown');
+        countdownElement.innerText = countdown;
 
-            var countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    countdownElement.innerText = countdown;
-                } else {
-                    clearInterval(countdownInterval);
-                    window.close(); // Close the popup when countdown ends
-                }
-            }, 1000);
-        });
-    </script>
+        let countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                countdownElement.innerText = countdown;
+            } else {
+                clearInterval(countdownInterval);
+                window.close(); // Close the popup when countdown ends
+            }
+        }, 1000);
+    });
+</script>
 </body>
 </html>

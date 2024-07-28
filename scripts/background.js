@@ -1,13 +1,16 @@
 import {
-    decrementCountdown,
-    getKey, incrementCount, incrementDownTime, incrementTimeElapsed,
+    YOUTUBE,
     INSTAGRAM,
-    setKey,
     TIKTOK,
-    YOUTUBE
+    decrementCountdown,
+    getKey,
+    setKey,
+    incrementCount,
+    incrementDownTime,
+    incrementTimeElapsed,
 } from "./data.js";
 
-import { default_json } from "../config.js";
+import {default_global_json, default_json} from "../config.js";
 // Non-Cache
 let intervalId; // Temp variable
 
@@ -72,13 +75,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             console.log('Content script injected after time limit reached.');
                             await setKey(site, 'injected', true);
                             await setKey(site, 'countInjected', true);
-                            await setKey(site, 'countdown', 15);
+                            await setKey(site, 'downTime', 0);
+                            await setKey(site, 'countdown', 10);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
                             console.error('Error injecting content script:', error);
                             clearInterval(intervalId);
-                            setKey(site, 'timerStarted', false);
-
+                            await setKey(site, 'timerStarted', false);
+                            await setKey(site, 'timeElapsed', 0);
                         });
                     }
                 } else {
@@ -96,6 +100,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                             console.log('Content script injected to unpause.');
                             await setKey(site, 'countInjected', false); // Allow future count-based injections
                             await setKey(site, 'injected', false); // Allow future time-based injections
+                            await setKey(site, 'downTime', 0); // Reset downtime
                             await setKey(site, 'currentlyPaused', true);
                             await setKey(site, 'timeElapsed', 0);
                         }).catch(async (error) => {
@@ -118,8 +123,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             }).then(async () => {
                 console.log('Content script injected after count limit reached');
                 await setKey(site, 'injected', true);
+                await setKey(site, 'downtime', 0);
                 await setKey(site, 'currentlyPaused', true);
-                await setKey(site, 'countdown', 15);
+                await setKey(site, 'timeElapsed', 0);
             }).catch(async (error) => {
                 console.error('Error injecting content script:', error);
                 clearInterval(intervalId);
@@ -159,7 +165,7 @@ chrome.runtime.onInstalled.addListener((details) => {
  * @param url
  * @returns {number|null}
  */
-function determineSite(url) {
+export function determineSite(url) {
     if (url.includes('tiktok.com/foryou') || (url.includes('tiktok.com/@') && url.includes('/video/'))) {
         return TIKTOK;
     } else if (url.includes('youtube.com/shorts')) {
@@ -176,8 +182,9 @@ function determineSite(url) {
  *
  * @returns {void}
  */
-function setConfig() {
+export function setConfig() {
     chrome.storage.local.set({ youtube: default_json });
     chrome.storage.local.set({ instagram: default_json });
     chrome.storage.local.set({ tiktok: default_json });
+    chrome.storage.local.set({ global: default_global_json });
 }

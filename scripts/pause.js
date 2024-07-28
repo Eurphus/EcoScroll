@@ -1,7 +1,7 @@
 console.log('pause.js script loaded and running.');
 
-var pauseObserver; // Ensure pauseObserver is globally scoped
-var pausedVideos = new WeakSet(); // Track paused videos
+let pauseObserver; // Ensure pauseObserver is globally scoped
+let pausedVideos = new WeakSet(); // Track paused videos
 
 // Function to enforce pause and lock on a video element
 function enforcePause(video) {
@@ -37,7 +37,7 @@ function enforcePause(video) {
 
 // Function to show a popup notification
 function showPopup(video) {
-    var popup = document.createElement('div');
+    let popup = document.createElement('div');
     popup.id = 'videoPausePopup';
     popup.style.position = 'fixed';
     popup.style.top = '50%';
@@ -54,7 +54,7 @@ function showPopup(video) {
     popup.style.backgroundSize = 'cover';
     popup.style.backgroundPosition = 'center';
 
-    var message = document.createElement('p');
+    let message = document.createElement('p');
     message.id = 'countdownMessage';
     message.style.color = 'white';
     message.style.fontSize = '24px';
@@ -66,12 +66,12 @@ function showPopup(video) {
 
     // Fetch the countdown value from the background script
     chrome.runtime.sendMessage({ action: 'getCountdown' }, function(response) {
-        var countdown = response.countdown || 10; // Default to 10 seconds if not set
+        let countdown = response.countdown || 10; // Default to 10 seconds if not set
 
         message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
 
         // Update the countdown every second
-        var countdownInterval = setInterval(() => {
+        let countdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
                 message.innerText = `Take a deep breath and relax. Resuming in ${countdown} seconds.`;
