@@ -27,9 +27,9 @@ function enforcePause(video) {
 
         // Show a popup notification
         showPopup(video);
-    } else if (window.pausedVideos.has(video)) {
-        console.log('Video already paused, skipping:', video);
-    } else {
+    } /*else if (window.pausedVideos.has(video)) {
+        console.log('Video alr);
+    } */ else {
         console.error('No video element found.');
     }
 }

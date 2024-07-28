@@ -1,10 +1,11 @@
-import { INSTAGRAM, YOUTUBE, TIKTOK, getKey } from "./data.js";
+import {INSTAGRAM, YOUTUBE, TIKTOK, GLOBAL, getKey, setKey} from "./data.js";
 
 // gets each scroll count for each platform and outputs it to the frontend
 
 window.onload = setInterval(async function () {
-
-    // shortWatched elements
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // watchedShorts Elements                                                                                         //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     let instagramCount = await getKey(INSTAGRAM, 'shortsWatched');
     document.getElementById("instagram-result").textContent = instagramCount + " Videos Watched";
 
@@ -14,7 +15,9 @@ window.onload = setInterval(async function () {
     let tiktokCount = await getKey(TIKTOK, 'shortsWatched');
     document.getElementById("tiktok-result").textContent = tiktokCount + " Videos Watched";
 
-    // Bottom left, minutes/scrolls left
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Remaining Limits                                                                                               //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     let minutesEnabled = await getKey(YOUTUBE, 'timeSelected');
     if (minutesEnabled) {
         let timeUsed = await getKey(YOUTUBE, 'timeUsed');
@@ -34,8 +37,22 @@ window.onload = setInterval(async function () {
     } else {
         document.getElementById("scrolls-left").textContent = "Disabled";
     }
-
-
-    // var currentScrolls = await getKey(GLOBAL, 'count');
-    // document.getElementById("scrolls-left").textContent = 
 }, 200);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Configure Settings                                                                                             //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function setAllValues() {
+    if (document.getElementById("control-by-time").checked === true) {
+        let timeLimit = document.getElementById("time-limit").value;
+        await setKey(YOUTUBE, "time-limit", timeLimit);
+    }
+
+    if (document.getElementById("control-by-quantity").checked === true) {
+        let scrollLimit = document.getElementById("quantity-limit").value;
+        await setKey(YOUTUBE, "quantity-limit", scrollLimit);
+    }
+
+    let breakTime = document.getElementById("pop-up-duration");
+    await setKey(YOUTUBE, "break-time", breakTime);
+}
