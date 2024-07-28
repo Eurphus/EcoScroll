@@ -71,18 +71,18 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                         chrome.scripting.executeScript({
                             target: {tabId: tabId},
                             files: ['scripts/pause.js']
-                        }).then(() => {
-                            console.log('Content script injected after time limit reached.');
-                            setInjected(site, true)
-                            setCountInjected(site,true)
-                            setDownTime(site, 0);
-                            setCountdown(site, 10);
-                            setTimeElapsed(site, 0);
-                        }).catch((error) => {
+                        }).then(async() => {
+                            await console.log('Content script injected after time limit reached.');
+                            await setInjected(site, true)
+                            await setCountInjected(site,true)
+                            await setDownTime(site, 0);
+                            await setCountdown(site, 10);
+                            await setTimeElapsed(site, 0);
+                        }).catch(async(error) => {
                             console.error('Error injecting content script:', error);
-                            clearInterval(intervalId);
-                            setTimerStarted(false);
-                            setTimeElapsed(site, 0);
+                            await clearInterval(intervalId);
+                            await setTimerStarted(false);
+                            await setTimeElapsed(site, 0);
                         });
                     }
                 } else {
@@ -96,18 +96,18 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                         chrome.scripting.executeScript({
                             target: { tabId: tabId },
                             files: ['scripts/unpause.js']
-                        }).then(() => {
+                        }).then(async() => {
                             console.log('Content script injected to unpause.');
-                            setCountInjected(site, false); // Allow future count-based injections
-                            setInjected(site, false); // Allow future time-based injections
-                            setDownTime(site, 0); // Reset downtime
-                            setCurrentlyPaused(site, true);
-                            setTimeElapsed(site, 0);
-                        }).catch((error) => {
+                            await setCountInjected(site, false); // Allow future count-based injections
+                            await setInjected(site, false); // Allow future time-based injections
+                            await setDownTime(site, 0); // Reset downtime
+                            await setCurrentlyPaused(site, true);
+                            await setTimeElapsed(site, 0);
+                        }).catch(async(error) => {
                             console.error('Error injecting unpause content script:', error);
-                            clearInterval(intervalId);
-                            setTimerStarted(site, false);
-                            setTimeElapsed(site, 0);
+                            await clearInterval(intervalId);
+                            await setTimerStarted(site, false);
+                            await setTimeElapsed(site, 0);
                         });
                     }
                 }
@@ -121,17 +121,17 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             chrome.scripting.executeScript({
                 target: {tabId: tabId},
                 files: ['scripts/pause.js']
-            }).then(() => {
-                console.log('Content script injected after count limit reached');
-                setInjected(site, false); // Allow future time-based injections
-                setDownTime(site, 0); // Reset downtime
-                setCurrentlyPaused(site, true);
-                setTimeElapsed(site, 0)
-            }).catch((error) => {
+            }).then(async() => {
+                await console.log('Content script injected after count limit reached');
+                await setInjected(site, false); // Allow future time-based injections
+                await setDownTime(site, 0); // Reset downtime
+                await setCurrentlyPaused(site, true);
+                await setTimeElapsed(site, 0)
+            }).catch(async(error) => {
                 console.error('Error injecting content script:', error);
-                clearInterval(intervalId);
-                setTimerStarted(site, false);
-                setTimeElapsed(site, 0);
+                await clearInterval(intervalId);
+                await setTimerStarted(site, false);
+                await setTimeElapsed(site, 0);
             });
         }
 
