@@ -69,10 +69,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     if (timeElapsed >= await getTimeLimit(site)) {
                         chrome.scripting.executeScript({
                             target: {tabId: tabId},
-                            files: ['scripts/content.js']
+                            files: ['scripts/pause.js']
                         }).then(() => {
                             console.log('Content script injected after time limit reached.');
                             setInjected(site, true)
+                            setCountInjected(site,true)
                             setDownTime(site, 0);
                             setCountdown(site, 10);
                         }).catch((error) => {
@@ -117,11 +118,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             await setCount(site, 0)
             chrome.scripting.executeScript({
                 target: {tabId: tabId},
-                files: ['scripts/content.js']
+                files: ['scripts/pause.js']
             }).then(() => {
                 console.log('Content script injected after count limit reached');
-                setCountInjected(site, true);
-                setDownTime(site, 0);
+                setInjected(site, false); // Allow future time-based injections
+                setDownTime(site, 0); // Reset downtime
+                setCurrentlyPaused(site, true);
+                setTimeElapsed(site, 0)
             }).catch((error) => {
                 console.error('Error injecting content script:', error);
                 clearInterval(intervalId);
@@ -153,11 +156,11 @@ chrome.runtime.onInstalled.addListener((details) => {
             intervalId: -1,
             timeElapsed: 0,
             downTime: 0,
-            timeLimit: 0,
-            countLimit: 0,
-            injected: true,
+            timeLimit: 15,
+            countLimit: 5,
+            injected: false,
             initialRun: true,
-            countdown: 60,
+            countdown: 15,
             countInjected: false,
             currentlyPaused: false
         }
