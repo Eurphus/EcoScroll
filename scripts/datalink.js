@@ -3,6 +3,8 @@ import { INSTAGRAM, YOUTUBE, TIKTOK, getKey } from "./data.js";
 // gets each scroll count for each platform and outputs it to the frontend
 
 window.onload = setInterval(async function () {
+
+    // shortWatched elements
     let instagramCount = await getKey(INSTAGRAM, 'shortsWatched');
     document.getElementById("instagram-result").textContent = instagramCount + " Videos Watched";
 
@@ -12,27 +14,28 @@ window.onload = setInterval(async function () {
     let tiktokCount = await getKey(TIKTOK, 'shortsWatched');
     document.getElementById("tiktok-result").textContent = tiktokCount + " Videos Watched";
 
-    var currentScrolls = await getKey(GLOBAL, 'count');
-    var maxScrolls = await getKey(GLOBAL, "quantity-limit");
-    document.getElementById("scrolls-left").textContent = toString(maxScrolls - currentScrolls) + " Scrolls Left";
+    // Bottom left, minutes/scrolls left
+    let minutesEnabled = await getKey(YOUTUBE, 'timeSelected');
+    if (minutesEnabled) {
+        let timeUsed = await getKey(YOUTUBE, 'timeUsed');
+        let timeLimit = await getKey(YOUTUBE, 'timeLimit');
+        let remaining = timeLimit - timeUsed;
+        document.getElementById("minutes-left").textContent = `${remaining} Seconds Left`
+    } else {
+        document.getElementById("minutes-left").textContent = "Disabled";
+    }
+    let scrollEnabled = await getKey(YOUTUBE, 'countSelected');
+    if (scrollEnabled) {
+        let countUsed = await getKey(YOUTUBE, 'count');
+        let countLimit = await getKey(YOUTUBE, 'countLimit');
+        let remaining = countLimit - countUsed;
 
-    // var currentTime = await getKey(GLOBAL, '')
+        document.getElementById("scrolls-left").textContent = `${remaining} Scrolls Left`
+    } else {
+        document.getElementById("scrolls-left").textContent = "Disabled";
+    }
+
+
+    // var currentScrolls = await getKey(GLOBAL, 'count');
+    // document.getElementById("scrolls-left").textContent = 
 }, 200);
-
-
-// functions for setting values
-
-async function setAllValues() {
-    if (document.getElementById("control-by-time").checked == true) {
-        var timeLimit = document.getElementById("time-limit").value;
-        await mod.setKey(mod.GLOBAL, "time-limit", timeLimit);
-    }
-
-    if (document.getElementById("control-by-quantity").checked == true) {
-        var scrollLimit = document.getElementById("quantity-limit").value;
-        await mod.setKey(mod.GLOBAL, "quantity-limit", scrollLimit);
-    }
-
-    var breakTime = document.getElementById("pop-up-duration");
-    await mod.setKey(mod.GLOBAL, "break-time", breakTime);
-}
