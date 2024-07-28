@@ -1,5 +1,7 @@
 # EcoScroll
 
+This project was developed at StarterHacks 2024 @ University of Waterloo. Developed by Peter Macdonald, Max Jin, Nathan Lu, Sam Jian and Johan Naresh.
+
 ## Issue
 Many youth often struggle with "doom-scrolling", staying on social media websites endlessly going from post to post or video to video, with often not much enjoyment. Personally, this has impacted my life considerably, as this type of behaviour is known to contribute to poor mental health. Additionally, I have struggled to stop myself from abusing these services. I have deleted the apps from my phone and told myself I can only use them on other devices such as my laptop, but even there I sometimes struggle with moderation of these services. It is infeasible to completely cut out all services like YouTube, Twitter, TikTok, Instagram and more from your life, because then you're left out of trends and what your friends are looking at, or unable to view important information, or genuinely enjoy these services in moderation.
 
