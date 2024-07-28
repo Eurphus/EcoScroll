@@ -1,6 +1,6 @@
 body {
     width:300px;
-    height:550px;
+    height: 560px;
     background:#1c1c1c;
     margin: 0;
     color: #D9D9D9;
@@ -29,6 +29,16 @@ body {
     padding-left: 85px;
     box-sizing: border-box;
     position: relative;
+}
+
+#points {
+    position: absolute;
+    top: 525px;
+    right: 20px;
+}
+
+#points-text {
+    font-size: 12px;
 }
 
 #button-menu {
