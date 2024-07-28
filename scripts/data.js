@@ -5,6 +5,7 @@
 export const YOUTUBE = 1
 export const INSTAGRAM = 2
 export const TIKTOK = 3
+export const GLOBAL = 4
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // General Data Functions                                                                                             //
@@ -16,7 +17,7 @@ export const TIKTOK = 3
  * @param site
  * @returns {Promise<*>}
  */
-export async function getSiteJSON(site) {
+async function getSiteJSON(site) {
     let result;
     switch (site) {
         case YOUTUBE:
@@ -27,6 +28,9 @@ export async function getSiteJSON(site) {
             break;
         case TIKTOK:
             result = (await chrome.storage.local.get(["tiktok"])).tiktok;
+            break;
+        case GLOBAL:
+            result = (await chrome.storage.local.get(["global"])).global
             break;
         default:
             throw new Error('Unknown site selected')
@@ -69,6 +73,9 @@ export async function applySetting(site, json) {
         case TIKTOK:
             await chrome.storage.local.set({ tiktok: json })
             break;
+        case GLOBAL:
+            await chrome.storage.local.set({ global: json })
+            break;
     }
 }
 
@@ -85,7 +92,18 @@ export async function applySetting(site, json) {
 export async function setKey(site, key, input) {
     const result = await getSiteJSON(site);
     result[key] = input;
-    applySetting(site, result);
+    await applySetting(site, result);
+}
+
+/**
+ * Updates the global shorts count.
+ *
+ * @returns {Promise<void>}
+ */
+export async function updateGlobalCount() {
+    let count = await getKey(GLOBAL, 'shortsWatched');
+    count += 1;
+    setKey(GLOBAL, 'shortsWatched', count);
 }
 
 /**
@@ -97,11 +115,12 @@ export async function setKey(site, key, input) {
 export async function incrementCount(site) {
     let count = await getKey(site, 'count');
     count += 1;
-    setKey(site, 'count', count);
+    await setKey(site, 'count', count);
+    await updateGlobalCount();
 }
 
 /**
- * Increments the timeElapsed key. Usedful for time tracking.
+ * Increments the timeElapsed key. Useful for time tracking.
  *
  * @param site
  * @returns {Promise<void>}
@@ -109,7 +128,7 @@ export async function incrementCount(site) {
 export async function incrementTimeElapsed(site) {
     let time = await getKey(site, 'timeElapsed');
     time += 1;
-    setKey(site, 'timeElapsed', time);
+    await setKey(site, 'timeElapsed', time);
 }
 
 /**
@@ -121,7 +140,7 @@ export async function incrementTimeElapsed(site) {
 export async function incrementDownTime(site) {
     let time = await getKey(site, 'downTime');
     time += 1;
-    setKey(site, 'downTime', time);
+    await setKey(site, 'downTime', time);
 }
 
 /**
@@ -133,5 +152,5 @@ export async function incrementDownTime(site) {
 export async function decrementCountdown(site) {
     let time = await getKey(site, 'countdown');
     time -= 1;
-    setKey(site, 'countdown', time);
+    await setKey(site, 'countdown', time);
 }
